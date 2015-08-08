@@ -43,6 +43,7 @@ class Account(object):
                            user_password=self.md5_pass)
 
             login = s.post(LOGIN_PAGE, payload)
+            print()
             if not login:  # Not a normal response, mayby the server is down?
                 return False
 
@@ -87,6 +88,6 @@ def head_float(s):
     return float(match(r'\d+(\.\d+)?', s).group())
 
 if __name__ == '__main__':
-    acc = Account("lisihan13", "1L2S3H@th")
+    acc = Account('lisihan13', '532da56d5f287fe343ca1eaa3234aa0c', True)
     acc.check()
     print(acc)
