@@ -4,10 +4,13 @@ from re import match, search, DOTALL
 
 from requests.sessions import Session
 from bs4 import BeautifulSoup
+from keyring import set_password, get_password
+import yaml
 
 BASE_URL = 'https://usereg.tsinghua.edu.cn'
 LOGIN_PAGE = BASE_URL + '/do.php'
 INFO_PAGE = BASE_URL + '/user_info.php'
+SERVICE_NAME = 'net.tsinghua'
 
 class Account(object):
     """Tsinghua Account"""
@@ -87,6 +90,38 @@ def _head_int(s):
 
 def _head_float(s):
     return float(match(r'\d+(\.\d+)?', s).group())
+
+
+# Save / load accounts.
+def save(filename, accounts):
+    content = {}
+    for acc in accounts:
+        # Save password.
+        set_password(SERVICE_NAME, acc.username, acc.md5_pass)
+        # Save infos.
+        infos = acc.infos
+        infos['last_check'] = acc.last_check
+        infos['valid'] = acc.valid
+
+        content[acc.username] = infos
+
+    yaml.dump(content, open(filename, 'w'))
+
+def load(filename):
+    accounts = []
+    content = yaml.load(open(filename))
+
+    for username, infos in content.items():
+        # Load password.
+        md5_pass = get_password(SERVICE_NAME, username)
+        acc = Account(username, md5_pass, True)
+        # Load infos.
+        acc.last_check = infos.pop('last_check')
+        acc.valid = infos.pop('valid')
+        acc.infos = infos
+
+        accounts.append(acc)
+
 
 if __name__ == '__main__':
     acc = Account('lisihan13', '532da56d5f287fe343ca1eaa3234aa0c', True)
