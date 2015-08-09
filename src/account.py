@@ -23,13 +23,14 @@ class Account(object):
             self.md5_pass = md5(password.encode()).hexdigest()
 
         # Account Infomations.
-        self.name = ''
-        self.id = ''
+        self.infos = {}
+        self.infos['name'] = ''
+        self.infos['id'] = ''
 
         # Balance & Usage.
-        self.balance = 0
-        self.ipv4_byte = 0
-        self.ipv6_byte = 0
+        self.infos['balance'] = 0
+        self.infos['ipv4_byte'] = 0
+        self.infos['ipv6_byte'] = 0
         self.last_check = None
 
         # Whether it is a valid acount.
@@ -65,20 +66,20 @@ class Account(object):
         i = map(str.strip, blocks)  # Only works in python 3.
         infos = dict(zip(i, i))
 
-        self.name = infos['姓名']
-        self.id = infos['证件号']
+        self.infos['name'] = infos['姓名']
+        self.infos['id'] = infos['证件号']
 
-        self.balance = _head_float(infos['帐户余额'])
-        self.ipv4_byte = _head_int(infos['使用流量(IPV4)'])
-        self.ipv6_byte = _head_int(infos['使用流量(IPV6)'])
+        self.infos['balance'] = _head_float(infos['帐户余额'])
+        self.infos['ipv4_byte'] = _head_int(infos['使用流量(IPV4)'])
+        self.infos['ipv6_byte'] = _head_int(infos['使用流量(IPV6)'])
 
         self.last_check = datetime.today()
 
     def __repr__(self):
         return '<Account(%s, %s, %sB, ¥%s, %s)>' % (self.username,
                                                     self.valid,
-                                                    self.ipv4_byte,
-                                                    self.balance,
+                                                    self.infos['ipv4_byte'],
+                                                    self.infos['balance'],
                                                     self.last_check)
 
 def _head_int(s):
