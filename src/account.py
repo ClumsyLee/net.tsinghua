@@ -93,7 +93,7 @@ def _head_float(s):
 
 
 # Save / load accounts.
-def save(filename, accounts):
+def save(accounts, filename):
     content = {}
     for acc in accounts:
         # Save password.
@@ -105,7 +105,7 @@ def save(filename, accounts):
 
         content[acc.username] = infos
 
-    yaml.dump(content, open(filename, 'w'))
+    yaml.dump(content, open(filename, 'w'), default_flow_style=False)
 
 def load(filename):
     accounts = []
@@ -121,6 +121,8 @@ def load(filename):
         acc.infos = infos
 
         accounts.append(acc)
+
+    return accounts
 
 
 if __name__ == '__main__':
