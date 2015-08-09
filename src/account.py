@@ -106,11 +106,13 @@ def save(accounts, filename):
 
         content[acc.username] = infos
 
-    yaml.dump(content, open(filename, 'w'), default_flow_style=False)
+    yaml.dump(content, open(filename, 'w', encoding='utf-8'),
+              default_flow_style=False,
+              allow_unicode=True)
 
 def load(filename):
     accounts = []
-    content = yaml.load(open(filename))
+    content = yaml.load(open(filename, encoding='utf-8'))
 
     for username, infos in content.items():
         # Load password.
