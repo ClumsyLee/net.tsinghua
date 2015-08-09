@@ -31,11 +31,12 @@ class Account(object):
         self.ipv6_byte = 0
         self.last_check = None
 
-        # Status.
+        # Whether it is a valid acount.
         self.valid = False
 
-
     def check(self):
+        """Try to check the validity & infos of the acount, return True if
+        succeeded."""
         try:
             s = Session()
             payload = dict(action='login',
@@ -43,18 +44,15 @@ class Account(object):
                            user_password=self.md5_pass)
 
             login = s.post(LOGIN_PAGE, payload)
-            print()
             if not login:  # Not a normal response, mayby the server is down?
                 return False
 
             if login.text == 'ok':
-                self.valid = True
                 self.update_infos(s)
+                self.valid = True   # Update validity only if infos updated.
             else:
                 self.valid = False
 
-            # Checking complete.
-            self.last_check = datetime.today()
             return True
         except:  # Things happened so checking did not finish.
             return False
@@ -72,6 +70,8 @@ class Account(object):
         self.balance = head_float(infos['帐户余额'])
         self.ipv4_byte = head_int(infos['使用流量(IPV4)'])
         self.ipv6_byte = head_int(infos['使用流量(IPV6)'])
+
+        self.last_check = datetime.today()
 
     def __repr__(self):
         return '<Account(%s, %s, %sB, ¥%s, %s)>' % (self.username,
