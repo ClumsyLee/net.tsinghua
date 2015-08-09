@@ -48,7 +48,7 @@ class Account(object):
                            user_login_name=self.username,
                            user_password=self.md5_pass)
 
-            login = s.post(LOGIN_PAGE, payload)
+            login = s.post(LOGIN_PAGE, payload, verify=False)
             if not login:  # Not a normal response, mayby the server is down?
                 return False
 
@@ -64,7 +64,8 @@ class Account(object):
 
     def update_infos(self, session):
         # Parse HTML.
-        soup = BeautifulSoup(session.get(INFO_PAGE).text, 'html.parser')
+        soup = BeautifulSoup(session.get(INFO_PAGE, verify=False).text,
+                             'html.parser')
         blocks = map(BeautifulSoup.get_text, soup.select('.maintd'))
         i = map(str.strip, blocks)  # Only works in python 3.
         infos = dict(zip(i, i))
