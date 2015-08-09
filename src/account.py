@@ -1,6 +1,7 @@
 from datetime import datetime
 from hashlib import md5
 from re import match, search, DOTALL
+
 from requests.sessions import Session
 from bs4 import BeautifulSoup
 
@@ -67,9 +68,9 @@ class Account(object):
         self.name = infos['姓名']
         self.id = infos['证件号']
 
-        self.balance = head_float(infos['帐户余额'])
-        self.ipv4_byte = head_int(infos['使用流量(IPV4)'])
-        self.ipv6_byte = head_int(infos['使用流量(IPV6)'])
+        self.balance = _head_float(infos['帐户余额'])
+        self.ipv4_byte = _head_int(infos['使用流量(IPV4)'])
+        self.ipv6_byte = _head_int(infos['使用流量(IPV6)'])
 
         self.last_check = datetime.today()
 
@@ -80,11 +81,10 @@ class Account(object):
                                                     self.balance,
                                                     self.last_check)
 
-
-def head_int(s):
+def _head_int(s):
     return int(match(r'\d+', s).group())
 
-def head_float(s):
+def _head_float(s):
     return float(match(r'\d+(\.\d+)?', s).group())
 
 if __name__ == '__main__':
