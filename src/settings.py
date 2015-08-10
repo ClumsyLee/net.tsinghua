@@ -13,36 +13,28 @@ class Settings(QWidget, Ui_Settings):
         """Update infos on the right side"""
         self.update_widgets()
 
-    def on_username_textEdited(self, text):
-        # Refuse to check if username is empty.
-        self.check_now_button.setEnabled(len(text))
-        self.user_list.current_account().username = text
-        # TODO: Only write to account when editing finished.
-        self.user_list.update_current_row()
-
     def clear_infos(self):
         self.name.setText('')
         self.id.setText('')
 
         self.username.setText('')
         self.password.setText('')
-        self.md5_check_box.setChecked(False)
-        self.set_login_info_enabled(True)
 
         self.balance.setText('')
         self.ipv4_byte.setText('')
         self.ipv6_byte.setText('')
         self.last_check.setText('')
 
-    def show_infos(self, acc):
-        self.set_login_info_enabled(not acc.valid)
-        self.username.setText(acc.username)
-        if acc.valid:
-            self.password.setText(acc.md5_pass)
-            self.md5_check_box.setChecked(True)
-            self.set_login_info_enabled(False)
+        self.set_password_editable(True)
 
-        if acc.last_check:  # We have some infos to show.
+    def show_infos(self, acc):
+        self.username.setText(acc.username)
+
+        if acc.valid:  # Disable password editing if already valid.
+            self.password.setText('*' * 32)  # Just use stars to present it.
+            self.set_password_editable(False)
+
+        if acc.last_check:  # We have extra infos to show.
             infos = acc.infos
 
             self.name.setText(infos['name'])
@@ -58,17 +50,18 @@ class Settings(QWidget, Ui_Settings):
     def update_widgets(self):
         self.clear_infos()
 
-        current_row = self.user_list.currentRow()
-        if current_row >= 0:
-            self.show_infos(self.user_list[current_row])
+        acc = self.user_list.current_account()
+        if acc:
+            self.show_infos(acc)
             self.delete_button.setEnabled(True)
         else:
             self.delete_button.setEnabled(False)
 
-    def set_login_info_enabled(self, enabled):
-        self.username.setEnabled(enabled)
-        self.password.setEnabled(enabled)
-        self.md5_check_box.setEnabled(enabled)
+    def set_password_editable(self, editable):
+        self.password.setEnabled(editable)
+        self.md5_check_box.setEnabled(editable)
+        # If editable,
+        self.md5_check_box.setChecked(not editable)
 
 if __name__ == '__main__':
     import sys

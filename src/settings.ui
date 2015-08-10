@@ -109,13 +109,6 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="username">
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="name_label">
              <property name="text">
@@ -224,6 +217,9 @@
              <property name="text">
               <string/>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="1">
@@ -244,12 +240,18 @@
              <property name="text">
               <string/>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="6" column="1">
             <widget class="QLabel" name="ipv6_byte">
              <property name="text">
               <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -258,12 +260,25 @@
              <property name="text">
               <string/>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="3" column="2">
             <widget class="QCheckBox" name="md5_check_box">
              <property name="text">
               <string>MD5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="username">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -310,42 +325,25 @@
    <extends>QListWidget</extends>
    <header>user_list.h</header>
    <slots>
-    <slot>add_user()</slot>
-    <slot>delete_user()</slot>
+    <slot>delete_account()</slot>
    </slots>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>add_button</sender>
-   <signal>clicked()</signal>
-   <receiver>user_list</receiver>
-   <slot>add_user()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>143</x>
-     <y>284</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>143</x>
-     <y>136</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>delete_button</sender>
    <signal>clicked()</signal>
    <receiver>user_list</receiver>
-   <slot>delete_user()</slot>
+   <slot>delete_account()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>280</y>
+     <x>76</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>73</x>
-     <y>148</y>
+     <x>74</x>
+     <y>235</y>
     </hint>
    </hints>
   </connection>

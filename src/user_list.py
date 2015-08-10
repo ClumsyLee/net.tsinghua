@@ -23,14 +23,12 @@ class UserList(QListWidget):
                 QListWidgetItem(self.account_summary(acc), self)
             self.setCurrentRow(0)  # Select first.
 
-    def add_user(self):
-        new_user = account.Account('', '')
-        self.accounts.append(new_user)
-        QListWidgetItem(self.account_summary(new_user), self)
-
+    def add_account(self, acc):
+        self.accounts.append(acc)
+        QListWidgetItem(self.account_summary(acc), self)
         self.setCurrentRow(len(self.accounts) - 1)  # Select the new account.
 
-    def delete_user(self):
+    def delete_account(self):
         row = self.currentRow()
         if row >= 0:
             self.takeItem(row)
