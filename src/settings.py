@@ -14,32 +14,45 @@ class Settings(QWidget, Ui_Settings):
         self.update_infos()
 
     def clear_infos(self):
-        pass
+        self.name.setText('')
+        self.id.setText('')
+
+        self.username.setText('')
+        self.password.setText('')
+        self.md5_check_box.setChecked(False)
+        self.set_login_info_enabled(True)
+
+        self.balance.setText('')
+        self.ipv4_byte.setText('')
+        self.ipv6_byte.setText('')
+        self.last_check.setText('')
 
     def show_infos(self, acc):
-        infos = acc.infos
-
-        self.name.setText(infos['name'])
-        self.id.setText(infos['id'])
-
         self.set_login_info_enabled(not acc.valid)
         self.username.setText(acc.username)
-        self.password.setText(acc.md5_pass)
-        self.md5_check_box.setChecked(True)
+        if acc.valid:
+            self.password.setText(acc.md5_pass)
+            self.md5_check_box.setChecked(True)
+            self.set_login_info_enabled(False)
 
-        self.balance.setText('{balance} 元'.format_map(infos))
-        self.ipv4_byte.setText('{ipv4_byte} B'.format_map(infos))
-        self.ipv6_byte.setText('{ipv6_byte} B'.format_map(infos))
-        if acc.last_check:
+        if acc.last_check:  # We have some infos to show.
+            infos = acc.infos
+
+            self.name.setText(infos['name'])
+            self.id.setText(infos['id'])
+
+            self.balance.setText('{balance} 元'.format_map(infos))
+            self.ipv4_byte.setText('{ipv4_byte} B'.format_map(infos))
+            self.ipv6_byte.setText('{ipv6_byte} B'.format_map(infos))
             self.last_check.setText(str(acc.last_check))
         else:
             self.last_check.setText('从未')
 
     def update_infos(self):
+        self.clear_infos()
+
         current_row = self.user_list.currentRow()
-        if current_row == -1:
-            self.clear_infos()
-        else:
+        if current_row >= 0:
             self.show_infos(self.user_list[current_row])
 
     def set_login_info_enabled(self, enabled):
