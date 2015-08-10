@@ -7,11 +7,11 @@ class Settings(QWidget, Ui_Settings):
         super(Settings, self).__init__(parent)
         self.setupUi(self)
 
-        self.update_infos()
+        self.update_widgets()
 
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
-        self.update_infos()
+        self.update_widgets()
 
     def on_username_textEdited(self, text):
         # Refuse to check if username is empty.
@@ -55,12 +55,15 @@ class Settings(QWidget, Ui_Settings):
         else:
             self.last_check.setText('从未')
 
-    def update_infos(self):
+    def update_widgets(self):
         self.clear_infos()
 
         current_row = self.user_list.currentRow()
         if current_row >= 0:
             self.show_infos(self.user_list[current_row])
+            self.delete_button.setEnabled(True)
+        else:
+            self.delete_button.setEnabled(False)
 
     def set_login_info_enabled(self, enabled):
         self.username.setEnabled(enabled)
