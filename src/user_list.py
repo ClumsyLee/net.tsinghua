@@ -24,7 +24,7 @@ class UserList(QListWidget):
             self.setCurrentRow(0)  # Select first.
 
     def add_user(self):
-        new_user = account.Account('unnamed', '')
+        new_user = account.Account('', '')
         self.accounts.append(new_user)
         QListWidgetItem(self.account_summary(new_user), self)
 
@@ -45,4 +45,12 @@ class UserList(QListWidget):
         self.currentItem().setText(new_summary)
 
     def account_summary(self, acc):
-        return "{}\n    {} 元".format(acc.username, acc.infos['balance'])
+        if acc.valid:
+            return ('{username} - {name}\n'
+                    '      {balance} 元\n'
+                    '      {ipv4_byte} B').format(username=acc.username,
+                                                  **acc.infos)
+        else:
+            return ('{} -\n'
+                    '      -\n'
+                    '      -').format(acc.username)
