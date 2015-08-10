@@ -78,6 +78,8 @@ class Account(object):
         self.infos['ipv6_byte'] = _head_int(infos['使用流量(IPV6)'])
 
         self.last_check = datetime.today()
+        self.last_check.microsecond = 0  # We don't need microsecond.
+
 
     def __repr__(self):
         return '<Account(%s, %s, %sB, ¥%s, %s)>' % (self.username,
