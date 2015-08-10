@@ -17,6 +17,7 @@ class Settings(QWidget, Ui_Settings):
         # Refuse to check if username is empty.
         self.check_now_button.setEnabled(len(text))
         self.user_list.current_account().username = text
+        # TODO: Only write to account when editing finished.
         self.user_list.update_current_row()
 
     def clear_infos(self):
