@@ -145,6 +145,8 @@ class Ui_Settings(object):
 
         self.retranslateUi(Settings)
         self.tabWidget.setCurrentIndex(0)
+        self.add_button.clicked.connect(self.user_list.add_user)
+        self.delete_button.clicked.connect(self.user_list.delete_user)
         QtCore.QMetaObject.connectSlotsByName(Settings)
 
     def retranslateUi(self, Settings):
