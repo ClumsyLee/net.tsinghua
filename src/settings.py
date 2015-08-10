@@ -7,11 +7,11 @@ class Settings(QWidget, Ui_Settings):
         super(Settings, self).__init__(parent)
         self.setupUi(self)
 
-        self.update_infos(self.user_list.currentRow())
+        self.update_infos()
 
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
-        self.update_infos(current_row)
+        self.update_infos()
 
     def clear_infos(self):
         pass
@@ -25,7 +25,7 @@ class Settings(QWidget, Ui_Settings):
         self.set_login_info_enabled(not acc.valid)
         self.username.setText(acc.username)
         self.password.setText(acc.md5_pass)
-        self.md5_check_box.setChecked = True
+        self.md5_check_box.setChecked(True)
 
         self.balance.setText('{balance} 元'.format_map(infos))
         self.ipv4_byte.setText('{ipv4_byte} B'.format_map(infos))
@@ -35,7 +35,8 @@ class Settings(QWidget, Ui_Settings):
         else:
             self.last_check.setText('从未')
 
-    def update_infos(self, current_row):
+    def update_infos(self):
+        current_row = self.user_list.currentRow()
         if current_row == -1:
             self.clear_infos()
         else:
