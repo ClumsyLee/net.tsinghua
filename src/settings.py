@@ -7,12 +7,11 @@ class Settings(QWidget, Ui_Settings):
         super(Settings, self).__init__(parent)
         self.setupUi(self)
 
+        self.update_infos(self.user_list.currentRow())
+
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
-        if current_row == -1:
-            self.clear_infos()
-        else:
-            self.show_infos(self.user_list.accounts[current_row])
+        self.update_infos(current_row)
 
     def clear_infos(self):
         pass
@@ -36,6 +35,12 @@ class Settings(QWidget, Ui_Settings):
         else:
             self.last_check.setText('从未')
 
+    def update_infos(self, current_row):
+        if current_row == -1:
+            self.clear_infos()
+        else:
+            self.show_infos(self.user_list[current_row])
+
     def set_login_info_enabled(self, enabled):
         self.username.setEnabled(enabled)
         self.password.setEnabled(enabled)
@@ -47,6 +52,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     settings = Settings()
     settings.show()
-    settings.show_infos(settings.user_list.accounts[0])
 
     sys.exit(app.exec_())
