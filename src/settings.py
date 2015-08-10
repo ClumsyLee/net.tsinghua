@@ -1,18 +1,21 @@
 from PyQt5.QtWidgets import QApplication, QWidget
 from ui_settings import Ui_Settings
+from user_list_model import UserListModel
 
 class Settings(QWidget, Ui_Settings):
     """Settings"""
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
         self.setupUi(self)
+        self.user_list = UserListModel(self)
+        self.user_list_view.setModel(self.user_list)
 
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
         if current_row == -1:
             self.clear_infos()
         else:
-            self.show_infos(self.user_list.accounts[current_row])
+            self.show_infos(self.user_list[current_row])
 
     def clear_infos(self):
         pass
@@ -47,6 +50,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     settings = Settings()
     settings.show()
-    settings.show_infos(settings.user_list.accounts[0])
+    settings.show_infos(settings.user_list[0])
 
     sys.exit(app.exec_())

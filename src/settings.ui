@@ -27,7 +27,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="UserList" name="user_list">
+          <widget class="QListView" name="user_list_view">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -304,50 +304,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>UserList</class>
-   <extends>QListWidget</extends>
-   <header>user_list.h</header>
-   <slots>
-    <slot>add_user()</slot>
-    <slot>delete_user()</slot>
-   </slots>
-  </customwidget>
- </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>add_button</sender>
-   <signal>clicked()</signal>
-   <receiver>user_list</receiver>
-   <slot>add_user()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>143</x>
-     <y>284</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>143</x>
-     <y>136</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>delete_button</sender>
-   <signal>clicked()</signal>
-   <receiver>user_list</receiver>
-   <slot>delete_user()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>73</x>
-     <y>280</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>73</x>
-     <y>148</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
