@@ -129,6 +129,7 @@ def load(filename):
 
 
 if __name__ == '__main__':
-    acc = Account('lisihan13', '532da56d5f287fe343ca1eaa3234aa0c', True)
-    acc.check()
+    acc = load('accounts.yml')[0]
+    print(acc)
+    print(acc.check())
     print(acc)
