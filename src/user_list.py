@@ -32,10 +32,17 @@ class UserList(QListWidget):
 
     def delete_user(self):
         row = self.currentRow()
-        self.takeItem(row)
-        del self.accounts[row]
+        if row >= 0:
+            self.takeItem(row)
+            del self.accounts[row]
 
+    def current_account(self):
+        row = self.currentRow()
+        return self.accounts[row] if row >= 0 else None
 
+    def update_current_row(self):
+        new_summary = self.account_summary(self.current_account())
+        self.currentItem().setText(new_summary)
 
     def account_summary(self, acc):
-        return "{}".format(acc.username)
+        return "{}\n    {} 元".format(acc.username, acc.infos['balance'])

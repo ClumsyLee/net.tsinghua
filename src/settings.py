@@ -13,6 +13,12 @@ class Settings(QWidget, Ui_Settings):
         """Update infos on the right side"""
         self.update_infos()
 
+    def on_username_textEdited(self, text):
+        # Refuse to check if username is empty.
+        self.check_now_button.setEnabled(len(text))
+        self.user_list.current_account().username = text
+        self.user_list.update_current_row()
+
     def clear_infos(self):
         self.name.setText('')
         self.id.setText('')
