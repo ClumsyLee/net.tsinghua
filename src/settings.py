@@ -23,7 +23,10 @@ class Settings(QWidget, Ui_Settings):
         self.name.setText(infos['name'])
         self.id.setText(infos['id'])
 
+        self.set_login_info_enabled(not acc.valid)
         self.username.setText(acc.username)
+        self.password.setText(acc.md5_pass)
+        self.md5_check_box.setChecked = True
 
         self.balance.setText('{balance} 元'.format_map(infos))
         self.ipv4_byte.setText('{ipv4_byte} B'.format_map(infos))
@@ -33,6 +36,10 @@ class Settings(QWidget, Ui_Settings):
         else:
             self.last_check.setText('从未')
 
+    def set_login_info_enabled(self, enabled):
+        self.username.setEnabled(enabled)
+        self.password.setEnabled(enabled)
+        self.md5_check_box.setEnabled(enabled)
 
 if __name__ == '__main__':
     import sys
