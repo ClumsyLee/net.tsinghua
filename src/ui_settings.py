@@ -22,15 +22,15 @@ class Ui_Settings(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.user_list_view = QtWidgets.QListView(self.user_tab)
+        self.user_list = UserList(self.user_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.user_list_view.sizePolicy().hasHeightForWidth())
-        self.user_list_view.setSizePolicy(sizePolicy)
-        self.user_list_view.setMaximumSize(QtCore.QSize(150, 16777215))
-        self.user_list_view.setObjectName("user_list_view")
-        self.verticalLayout_2.addWidget(self.user_list_view)
+        sizePolicy.setHeightForWidth(self.user_list.sizePolicy().hasHeightForWidth())
+        self.user_list.setSizePolicy(sizePolicy)
+        self.user_list.setMaximumSize(QtCore.QSize(150, 16777215))
+        self.user_list.setObjectName("user_list")
+        self.verticalLayout_2.addWidget(self.user_list)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.delete_button = QtWidgets.QPushButton(self.user_tab)
@@ -145,6 +145,8 @@ class Ui_Settings(object):
 
         self.retranslateUi(Settings)
         self.tabWidget.setCurrentIndex(0)
+        self.add_button.clicked.connect(self.user_list.add_user)
+        self.delete_button.clicked.connect(self.user_list.delete_user)
         QtCore.QMetaObject.connectSlotsByName(Settings)
 
     def retranslateUi(self, Settings):
@@ -164,3 +166,4 @@ class Ui_Settings(object):
         self.md5_check_box.setText(_translate("Settings", "MD5"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.user_tab), _translate("Settings", "用户"))
 
+from user_list import UserList
