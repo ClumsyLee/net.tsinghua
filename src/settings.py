@@ -13,6 +13,8 @@ class Settings(QDialog, Ui_Settings):
         self.apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
         self.apply_button.setEnabled(False)
         self.user_list.dirty_changed.connect(self.apply_button.setEnabled)
+        self.apply_button.clicked.connect(self.user_list.save)
+        self.accepted.connect(self.user_list.save)
 
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
