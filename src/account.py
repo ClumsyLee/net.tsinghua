@@ -1,5 +1,6 @@
 from datetime import datetime
 from hashlib import md5
+import logging
 from re import match, search, DOTALL
 
 from requests.sessions import Session
@@ -54,6 +55,7 @@ class Account(object):
 
             login = s.post(LOGIN_PAGE, payload, verify=False)
             if not login:  # Not a normal response, mayby the server is down?
+                logging.error('Login request failed: received %s', login)
                 return False
 
             if login.text == 'ok':
@@ -63,7 +65,8 @@ class Account(object):
                 self.valid = False
 
             return True
-        except:  # Things happened so checking did not finish.
+        except Exception as e:  # Things happened so checking did not finish.
+            logging.error('Except received while checking: %s', e)
             return False
 
     def update_infos(self, session):
@@ -81,8 +84,8 @@ class Account(object):
         self.infos['ipv4_byte'] = _head_int(infos['使用流量(IPV4)'])
         self.infos['ipv6_byte'] = _head_int(infos['使用流量(IPV6)'])
 
-        self.last_check = datetime.today()
-        self.last_check.microsecond = 0  # We don't need microsecond.
+        # We don't need microsecond.
+        self.last_check = datetime.today().replace(microsecond=0)
 
     def __repr__(self):
         return '<Account(%s, %s, %sB, ¥%s, %s)>' % (self.username,
