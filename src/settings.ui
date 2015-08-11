@@ -16,16 +16,10 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="account_tab">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
       <attribute name="title">
        <string>账号管理</string>
       </attribute>
@@ -176,9 +170,6 @@
            </property>
            <property name="placeholderText">
             <string/>
-           </property>
-           <property name="clearButtonEnabled">
-            <bool>false</bool>
            </property>
           </widget>
          </item>
