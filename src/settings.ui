@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
-    <height>383</height>
+    <width>571</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,13 +19,20 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="user_tab">
+     <widget class="QWidget" name="account_tab">
       <attribute name="title">
-       <string>用户</string>
+       <string>账号管理</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="new_account">
+           <property name="placeholderText">
+            <string>新账号</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="UserList" name="user_list">
            <property name="sizePolicy">
@@ -43,22 +50,11 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="delete_button">
-             <property name="text">
-              <string>删除</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="add_button">
-             <property name="text">
-              <string>添加</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QPushButton" name="delete_button">
+           <property name="text">
+            <string>删除</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -69,37 +65,7 @@
            <property name="horizontalSpacing">
             <number>-1</number>
            </property>
-           <item row="4" column="0">
-            <widget class="QLabel" name="balance_label">
-             <property name="text">
-              <string>余额:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="username_label">
-             <property name="text">
-              <string>账号:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="ipv4_byte_label">
-             <property name="text">
-              <string>ipv4 流量:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
+           <item row="7" column="0">
             <widget class="QLabel" name="ipv6_byte_label">
              <property name="text">
               <string>ipv6 流量:</string>
@@ -109,10 +75,10 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="name_label">
+           <item row="5" column="0">
+            <widget class="QLabel" name="balance_label">
              <property name="text">
-              <string>姓名:</string>
+              <string>余额:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -120,6 +86,66 @@
             </widget>
            </item>
            <item row="3" column="0">
+            <widget class="QLabel" name="username_label">
+             <property name="text">
+              <string>账号:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="ipv4_byte_label">
+             <property name="text">
+              <string>ipv4 流量:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="last_check_label">
+             <property name="text">
+              <string>上次检查:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="username">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLabel" name="ipv6_byte">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLabel" name="last_check">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
             <widget class="QLabel" name="password_label">
              <property name="text">
               <string>密码:</string>
@@ -129,7 +155,60 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="1">
+           <item row="1" column="0">
+            <widget class="QLabel" name="name_label">
+             <property name="text">
+              <string>姓名:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="password">
+             <property name="echoMode">
+              <enum>QLineEdit::Password</enum>
+             </property>
+             <property name="placeholderText">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="id_label">
+             <property name="text">
+              <string>学号:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="balance">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="name">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="scaledContents">
+              <bool>false</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <spacer name="horizontalSpacer_3">
@@ -169,30 +248,7 @@
              </item>
             </layout>
            </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="last_check_label">
-             <property name="text">
-              <string>上次检查:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="name">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="scaledContents">
-              <bool>false</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QLabel" name="id">
              <property name="text">
               <string/>
@@ -202,37 +258,7 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="id_label">
-             <property name="text">
-              <string>学号:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="balance">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="password">
-             <property name="echoMode">
-              <enum>QLineEdit::Password</enum>
-             </property>
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
+           <item row="6" column="1">
             <widget class="QLabel" name="ipv4_byte">
              <property name="enabled">
               <bool>true</bool>
@@ -245,42 +271,25 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
-            <widget class="QLabel" name="ipv6_byte">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLabel" name="last_check">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
+           <item row="4" column="2">
             <widget class="QCheckBox" name="md5_check_box">
              <property name="text">
               <string>MD5</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="username">
-             <property name="text">
-              <string/>
+           <item row="0" column="1">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
              </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
              </property>
-            </widget>
+            </spacer>
            </item>
           </layout>
          </item>

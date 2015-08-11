@@ -23,10 +23,20 @@ class UserList(QListWidget):
                 QListWidgetItem(self.account_summary(acc), self)
             self.setCurrentRow(0)  # Select first.
 
-    def add_account(self, acc):
+    def add_account(self, username):
+        if not username:  # Not empty.
+            return False
+
+        for row, acc in enumerate(self.accounts):  # Not existed.
+            if acc.username == username:
+                self.setCurrentRow(row)  # Focus on the existed account.
+                return False
+
+        acc = account.Account(username, '')
         self.accounts.append(acc)
         QListWidgetItem(self.account_summary(acc), self)
         self.setCurrentRow(len(self.accounts) - 1)  # Select the new account.
+        return True
 
     def delete_account(self):
         row = self.currentRow()

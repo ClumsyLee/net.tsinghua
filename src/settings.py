@@ -1,5 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog
 from ui_settings import Ui_Settings
+import account
 
 class Settings(QWidget, Ui_Settings):
     """Settings"""
@@ -12,6 +14,14 @@ class Settings(QWidget, Ui_Settings):
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
         self.update_widgets()
+
+    @pyqtSlot()
+    def on_new_account_returnPressed(self):
+        if self.user_list.add_account(self.new_account.text()):
+            self.new_account.clear()
+            self.password.setFocus(Qt.OtherFocusReason)
+        else:
+            self.new_account.selectAll()
 
     def clear_infos(self):
         self.name.setText('')
