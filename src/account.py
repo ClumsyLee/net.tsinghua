@@ -17,13 +17,7 @@ class Account(object):
     def __init__(self, username, password, is_md5=False):
         super(Account, self).__init__()
         self.username = username
-
-        if is_md5:
-            if len(password) != 32:
-                raise ValueError('Length of a MD5 string must be 32')
-            self.md5_pass = password
-        else:
-            self.md5_pass = self.encode_password(password)
+        self.set_password(password, is_md5)
 
         # Account Infomations.
         self.infos = {}
@@ -39,8 +33,15 @@ class Account(object):
         # Whether it is a valid acount.
         self.valid = False
 
-    def update_password(self, new_pass):
-        self.md5_pass = self.encode_password(password)
+    def set_password(self, password, is_md5=False):
+        if not is_md5:
+            self.md5_pass = md5(password.encode()).hexdigest()
+        elif len(password) == 32:
+            self.md5_pass = password
+        else:
+            return False
+
+        return True
 
     def check(self):
         """Try to check the validity & infos of the acount, return True if
@@ -82,9 +83,6 @@ class Account(object):
 
         self.last_check = datetime.today()
         self.last_check.microsecond = 0  # We don't need microsecond.
-
-    def encode_password(self, password):
-        return md5(password.encode()).hexdigest()
 
     def __repr__(self):
         return '<Account(%s, %s, %sB, ¥%s, %s)>' % (self.username,
