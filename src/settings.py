@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import QApplication, QDialog, QInputDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QInputDialog, QDialogButtonBox
 from ui_settings import Ui_Settings
 import account
 
@@ -8,8 +8,11 @@ class Settings(QDialog, Ui_Settings):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent)
         self.setupUi(self)
-
         self.update_widgets()
+
+        self.apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
+        self.apply_button.setEnabled(False)
+        self.user_list.dirty_changed.connect(self.apply_button.setEnabled)
 
     def on_user_list_currentRowChanged(self, current_row):
         """Update infos on the right side"""
@@ -24,8 +27,8 @@ class Settings(QDialog, Ui_Settings):
 
     def on_password_editingFinished(self):
         """Save password into the account when finish editing."""
-        acc = self.user_list.current_account()
-        acc.set_password(self.password.text(), self.md5_check_box.isChecked())
+        self.user_list.set_password(self.password.text(),
+                                    self.md5_check_box.isChecked())
 
     # @pyqtSlot()
     # def on_check_now_button_clicked(self):

@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 import account
 
@@ -7,14 +8,24 @@ class UserList(QListWidget):
         super(UserList, self).__init__(parent)
         self.filename = filename
         self.accounts = []
+        self.dirty = False
 
         self.load()
+
+    dirty_changed = pyqtSignal(bool)
 
     def __getitem__(self, index):
        return self.accounts[index]
 
+    def set_dirty(self, dirty):
+        was_dirty = self.dirty
+        self.dirty = dirty
+        if was_dirty != dirty:
+            self.dirty_changed.emit(dirty)
+
     def save(self):
         account.save(self.accounts, self.filename)
+        self.set_dirty(False)
 
     def load(self):
         self.accounts = account.load(self.filename)
@@ -22,6 +33,8 @@ class UserList(QListWidget):
             for acc in self.accounts:
                 QListWidgetItem(self.account_summary(acc), self)
             self.setCurrentRow(0)  # Select first.
+
+        self.set_dirty(False)
 
     def add_account(self, username):
         if not username:  # Not empty.
@@ -36,6 +49,8 @@ class UserList(QListWidget):
         self.accounts.append(acc)
         QListWidgetItem(self.account_summary(acc), self)
         self.setCurrentRow(len(self.accounts) - 1)  # Select the new account.
+
+        self.set_dirty(True)
         return True
 
     def delete_account(self):
@@ -43,14 +58,37 @@ class UserList(QListWidget):
         if row >= 0:
             self.takeItem(row)
             del self.accounts[row]
+            self.set_dirty(True)
 
     def current_account(self):
         row = self.currentRow()
         return self.accounts[row] if row >= 0 else None
 
-    def update_current_row(self):
-        new_summary = self.account_summary(self.current_account())
-        self.currentItem().setText(new_summary)
+    def set_password(self, password, is_md5=False):
+        """Set the password of the current account"""
+        row = self.currentRow()
+        if row >= 0:
+            self.accounts[row].set_password(password, is_md5)
+            self.set_dirty(True)
+
+    def check(self):
+        """Check the current account"""
+        row = self.currentRow()
+        if row >= 0:
+            result = self.accounts[row].check()
+            if result:
+                self.set_dirty(True)
+        else:
+            result = False
+
+        return result
+
+    def update_summary(self):
+        """Update the summary of the current account"""
+        acc = self.current_account()
+        if acc:
+            new_summary = self.account_summary()
+            self.currentItem().setText(new_summary)
 
     def account_summary(self, acc):
         if acc.valid:
