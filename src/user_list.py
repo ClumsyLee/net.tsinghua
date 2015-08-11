@@ -77,6 +77,7 @@ class UserList(QListWidget):
         if row >= 0:
             result = self.accounts[row].check()
             if result:
+                self.update_summary()
                 self.set_dirty(True)
         else:
             result = False
@@ -87,7 +88,7 @@ class UserList(QListWidget):
         """Update the summary of the current account"""
         acc = self.current_account()
         if acc:
-            new_summary = self.account_summary()
+            new_summary = self.account_summary(acc)
             self.currentItem().setText(new_summary)
 
     def account_summary(self, acc):
