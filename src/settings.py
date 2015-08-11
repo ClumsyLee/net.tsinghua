@@ -10,6 +10,7 @@ class Settings(QDialog, Ui_Settings):
         self.setupUi(self)
         self.update_widgets()
 
+        # Connect buttons in the button box.
         self.apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
         self.apply_button.setEnabled(False)
         self.user_list.dirty_changed.connect(self.apply_button.setEnabled)
@@ -32,8 +33,10 @@ class Settings(QDialog, Ui_Settings):
         self.user_list.set_password(self.password.text(),
                                     self.md5_check_box.isChecked())
 
-    # @pyqtSlot()
-    # def on_check_now_button_clicked(self):
+    @pyqtSlot()
+    def on_check_now_button_clicked(self):
+        if self.user_list.check():
+            self.update_widgets()
 
     def keyPressEvent(self, event):
         """Do not handle enter/return key if the user is editing"""
