@@ -15,8 +15,8 @@ class NetDotTsinghuaApplication(QApplication):
         self.worker_thread = QThread()
         self.worker.moveToThread(self.worker_thread)
 
-        self.app_started.connect(self.worker.start_timers)
-        self.app_started.connect(self.worker.check_status)
+        self.app_started.connect(self.worker.app_started)
+        self.worker.status_changed.connect(self.status_changed)
 
     app_started = pyqtSignal()
 
@@ -25,6 +25,8 @@ class NetDotTsinghuaApplication(QApplication):
         self.app_started.emit()  # Start timers & check status.
         return super().exec()
 
+    def status_changed(self, status):
+        print('Status changed to', status, 'in the GUI thread')
 
 if __name__ == '__main__':
     import sys

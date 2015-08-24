@@ -33,11 +33,9 @@ class Worker(QObject):
         # Timers.
         self.check_status_timer = QTimer(self)
         self.check_status_timer.setInterval(5000)
-        self.check_status_timer.timeout.connect(self.check_status)
 
         # Monitor online status.
         self.network_manager = QNetworkConfigurationManager(self)
-        self.network_manager.onlineStateChanged.connect(self.check_status)
 
     status_changed = pyqtSignal(str)
 
@@ -60,8 +58,11 @@ class Worker(QObject):
         else:
             logging.info('Status remains %s', new_status)
 
-    def start_timers(self):
+    def app_started(self):
+        """Things to do when the app has started"""
+        self.check_status_timer.timeout.connect(self.check_status)
         self.check_status_timer.start()
+        self.network_manager.onlineStateChanged.connect(self.check_status)
 
     def check_status(self):
         """Check current status, take actions if needed"""
