@@ -64,7 +64,7 @@ class Account(object):
                 return False
 
             if login.text == 'ok':
-                self.update_infos(s)
+                self.__update_infos(s)
                 self.valid = True   # Update validity only if infos updated.
             else:
                 self.valid = False
@@ -74,7 +74,11 @@ class Account(object):
             logging.error('Exception received while checking: %s', e)
             return False
 
-    def update_infos(self, session):
+    def login(self):
+        """Login using current account"""
+        return False   # TODO: Implement.
+
+    def __update_infos(self, session):
         # Parse HTML.
         soup = BeautifulSoup(session.get(INFO_PAGE, verify=False).text,
                              'html.parser')
