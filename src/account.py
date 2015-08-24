@@ -109,9 +109,8 @@ def _head_int(s):
 def _head_float(s):
     return float(match(r'\d+(\.\d+)?', s).group())
 
-
 # Save / load accounts.
-def save(accounts, filename):
+def save_accounts(accounts, filename):
     content = {}
     for acc in accounts:
         # Save password.
@@ -128,7 +127,7 @@ def save(accounts, filename):
               default_flow_style=False,
               allow_unicode=True)
 
-def load(filename):
+def load_accounts(filename):
     accounts = []
     content = yaml.load(open(filename, encoding='utf-8'))
 
@@ -144,10 +143,3 @@ def load(filename):
         accounts.append(acc)
 
     return accounts
-
-
-if __name__ == '__main__':
-    acc = load('accounts.yml')[0]
-    print(acc)
-    print(acc.check())
-    print(acc)
