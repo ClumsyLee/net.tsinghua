@@ -16,8 +16,10 @@ SERVICE_NAME = 'net.tsinghua'
 class Account(object):
     """Tsinghua Account"""
     def __init__(self, username, password, is_md5=False):
-        super(Account, self).__init__()
+        super().__init__()
         self.username = username
+        self.password = None
+        self.is_md5 = None
         self.set_password(password, is_md5)
 
         # Account Infomations.
@@ -35,18 +37,21 @@ class Account(object):
         self.valid = False
 
     def set_password(self, password, is_md5=False):
-        if not is_md5:
-            self.md5_pass = md5(password.encode()).hexdigest()
-        elif len(password) == 32:
-            self.md5_pass = password
-        else:
-            return False
+        if is_md5 and len(password) != 32:
+            raise ValueError('Invalid MD5ed password ({}): Length should be 32'
+                             .format(password))
+        self.password = password
+        self.is_md5 = is_md5
 
-        return True
+    @property
+    def md5_pass(self):
+        password = self.password
+        return password if self.md5 else md5(password.encode()).hexdigest()
 
     def check(self):
         """Try to check the validity & infos of the acount, return True if
         succeeded."""
+        logging.info('Checking account, username: %s', self.username)
         try:
             s = Session()
             payload = dict(action='login',
@@ -54,7 +59,7 @@ class Account(object):
                            user_password=self.md5_pass)
 
             login = s.post(LOGIN_PAGE, payload, verify=False)
-            if not login:  # Not a normal response, mayby the server is down?
+            if not login:  # Not a normal response, mayby the network is down?
                 logging.error('Login request failed: received %s', login)
                 return False
 
@@ -66,7 +71,7 @@ class Account(object):
 
             return True
         except Exception as e:  # Things happened so checking did not finish.
-            logging.error('Except received while checking: %s', e)
+            logging.error('Exception received while checking: %s', e)
             return False
 
     def update_infos(self, session):
@@ -106,9 +111,10 @@ def save(accounts, filename):
     content = {}
     for acc in accounts:
         # Save password.
-        set_password(SERVICE_NAME, acc.username, acc.md5_pass)
+        set_password(SERVICE_NAME, acc.username, acc.password)
         # Save infos.
         infos = acc.infos
+        infos['is_md5'] = acc.is_md5
         infos['last_check'] = acc.last_check
         infos['valid'] = acc.valid
 
@@ -124,8 +130,8 @@ def load(filename):
 
     for username, infos in content.items():
         # Load password.
-        md5_pass = get_password(SERVICE_NAME, username)
-        acc = Account(username, md5_pass, True)
+        password = get_password(SERVICE_NAME, username)
+        acc = Account(username, password, infos.pop('is_md5'))
         # Load infos.
         acc.last_check = infos.pop('last_check')
         acc.valid = infos.pop('valid')
