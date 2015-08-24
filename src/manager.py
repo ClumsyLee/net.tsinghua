@@ -17,10 +17,17 @@ class Manager(object):
     def login(self):
         """Just using the first account.
         Override this method to have a diffrent behavior."""
-        return (len(self.accounts) and self.accounts[0].login())
+        if len(self.accounts):
+            acc = self.accounts[0]
+            logging.info('Logging in using %s', acc)
+            return acc.login()
+        else:
+            logging.warning('No accounts for logging in, please add some')
+            return False
 
     def logout(self):
-        return False   # TODO: Implement.
+        logging.info('Logging out')
+        return True   # TODO: Implement.
 
     def check_all(self):
         for acc in self.accounts:
