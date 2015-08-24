@@ -142,4 +142,5 @@ def load_accounts(filename):
 
         accounts.append(acc)
 
+    accounts.sort(key=lambda acc: acc.username)
     return accounts

@@ -64,6 +64,8 @@ class Worker(QObject):
         self.check_status_timer.start()
         self.network_manager.onlineStateChanged.connect(self.check_status)
 
+        self.check_status()  # Initial check.
+
     def check_status(self):
         """Check current status, take actions if needed"""
         self.update_status()
