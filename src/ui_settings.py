@@ -146,6 +146,7 @@ class Ui_Settings(object):
         self.buttonBox.accepted.connect(Settings.accept)
         self.buttonBox.rejected.connect(Settings.reject)
         self.delete_button.clicked.connect(self.user_list.delete_account)
+        self.password.returnPressed.connect(self.check_now_button.click)
         QtCore.QMetaObject.connectSlotsByName(Settings)
 
     def retranslateUi(self, Settings):

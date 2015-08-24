@@ -24,7 +24,7 @@ class Settings(QDialog, Ui_Settings):
     def on_new_account_returnPressed(self):
         if self.user_list.add_account(self.new_account.text()):
             self.new_account.clear()
-            self.password.setFocus(Qt.OtherFocusReason)
+            self.password.setFocus()
         else:
             self.new_account.selectAll()
 
@@ -37,6 +37,8 @@ class Settings(QDialog, Ui_Settings):
     def on_check_now_button_clicked(self):
         if self.user_list.check():
             self.update_widgets()
+            if not self.user_list.current_account().valid:  # Wrong password.
+                self.password.setFocus()
 
     def keyPressEvent(self, event):
         """Do not handle enter/return key if the user is editing"""

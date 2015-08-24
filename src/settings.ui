@@ -373,5 +373,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>password</sender>
+   <signal>returnPressed()</signal>
+   <receiver>check_now_button</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>352</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
