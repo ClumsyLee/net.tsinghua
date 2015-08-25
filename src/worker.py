@@ -26,23 +26,19 @@ class Worker(QObject):
         #     UNKNOWN_ACCOUNT_ONLINE
         #     LOGGING_OUT
         #     NETWORK_ERROR
-        self._status = 'NO_CONNECTION'
-        self.session = None
-
         self.config_filename = config_filename
         self.config = None
-        self.load_config()
 
-        self.account = TsinghuaAccount(self.config['username'])
-
-        # Timers.
+        self._status = 'NO_CONNECTION'
+        self.session = None
+        self.account = None
         self.check_status_timer = QTimer(self)
-        self.check_status_timer.setInterval(
-            self.config['check_status_interval_msec'])
 
         # Watchers.
         self.network_manager = QNetworkConfigurationManager(self)
         self.file_system_watcher = QFileSystemWatcher([config_filename], self)
+
+        self.load_config()  # Load configurations at last.
 
     status_changed = pyqtSignal(str)
 
@@ -69,6 +65,11 @@ class Worker(QObject):
         if self.config:
             logging.info('Reloading configuration file.')
         self.config = yaml.load(open(self.config_filename, encoding='utf-8'))
+
+        # Apply configs.
+        self.check_status_timer.setInterval(
+            self.config['check_status_interval_msec'])
+        self.account = TsinghuaAccount(self.config['username'])
 
     def app_started(self):
         """Things to do when the app has started"""
