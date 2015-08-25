@@ -56,7 +56,7 @@ class Worker(QObject):
             logging.info('Status changed to %s', new_status)
             self.status_changed.emit(new_status)
         else:
-            logging.info('Status remains %s', new_status)
+            logging.debug('Status remains %s', new_status)
 
     def app_started(self):
         """Things to do when the app has started"""
@@ -76,7 +76,7 @@ class Worker(QObject):
 
     def update_status(self):
         """Update current status"""
-        logging.info('Updating status')
+        logging.debug('Updating status')
 
         if not self.network_manager.isOnline():
             self.status = 'NO_CONNECTION'

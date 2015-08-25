@@ -55,7 +55,10 @@ class NetDotTsinghuaApplication(QApplication):
 if __name__ == '__main__':
     import sys
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(
+        format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        level=logging.INFO)
     app = NetDotTsinghuaApplication(sys.argv)
 
     sys.exit(app.exec())
