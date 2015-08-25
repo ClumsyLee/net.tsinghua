@@ -66,7 +66,9 @@ class Worker(QObject):
             logging.debug('Status remains %s', new_status)
 
     def load_config(self):
-        self.config = yaml.load(open(config_filename, encoding='utf-8'))
+        if self.config:
+            logging.info('Reloading configuration file.')
+        self.config = yaml.load(open(self.config_filename, encoding='utf-8'))
 
     def app_started(self):
         """Things to do when the app has started"""
