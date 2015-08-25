@@ -4,9 +4,16 @@ import logging
 from re import match
 
 from bs4 import BeautifulSoup
-from requests.sessions import Session, RequestException
+from requests import Session, RequestException
 
-from abstract_accounth import AbstractAccount
+from abstract_account import AbstractAccount
+
+
+def _head_int(s):
+    return int(match(r'\d+', s).group())
+
+def _head_float(s):
+    return float(match(r'\d+(\.\d+)?', s).group())
 
 class TsinghuaAccount(AbstractAccount):
     """Tsinghua account"""
@@ -40,7 +47,7 @@ class TsinghuaAccount(AbstractAccount):
                                  .format(self.username))
             # Parse.
             # FIXME: Will cause warnings.
-            r = s.get(USEREG_INFO_PAGE, verify=False)
+            r = s.get(self.USEREG_INFO_PAGE, verify=False)
             r.raise_for_status()
             return self.__parse_info_page(r.text)
 
@@ -51,7 +58,7 @@ class TsinghuaAccount(AbstractAccount):
     def __parse_info_page(self, page):
         """Parse infos from the info page of usereg"""
         try:
-            soup = BeautifulSoup(text, 'html.parser')
+            soup = BeautifulSoup(page, 'html.parser')
 
             blocks = map(BeautifulSoup.get_text, soup.select('.maintd'))
             i = map(str.strip, blocks)  # Only works in python 3.
@@ -70,12 +77,6 @@ class TsinghuaAccount(AbstractAccount):
             logging.error('Exception received while parsing info page: %s', e)
             logging.error('Info page content:\n%s', page)
             return False
-
-    def __head_int(s):
-        return int(match(r'\d+', s).group())
-
-    def __head_float(s):
-        return float(match(r'\d+(\.\d+)?', s).group())
 
     @staticmethod
     def balance_to_max_byte(balance):
