@@ -1,20 +1,21 @@
 import logging
+import yaml
 
 # Used for simulation.
 # TODO: Remove these lines.
 from time import sleep
 from random import choice
 
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QTimer, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QThread, QFileSystemWatcher
 from PyQt5.QtNetwork import QNetworkConfigurationManager, QNetworkConfiguration
 
-from manager import Manager
+from tsinghua_account import TsinghuaAccount
 
-ACCOUNTS_FILENAME = 'accounts.yml'
+CONFIG_FILENAME = 'config.yml'
 
 class Worker(QObject):
     """Worker"""
-    def __init__(self, parent=None, accounts_filename=ACCOUNTS_FILENAME):
+    def __init__(self, parent=None, config_filename=CONFIG_FILENAME):
         super().__init__(parent)
 
         # Possible statuses:
@@ -26,16 +27,22 @@ class Worker(QObject):
         #     LOGGING_OUT
         #     NETWORK_ERROR
         self._status = 'NO_CONNECTION'
-        self.username = None
-        self.auto_login = True
-        self.manager = Manager(accounts_filename)
+        self.session = None
+
+        self.config_filename = config_filename
+        self.config = None
+        self.load_config()
+
+        self.account = TsinghuaAccount(self.config['username'])
 
         # Timers.
         self.check_status_timer = QTimer(self)
-        self.check_status_timer.setInterval(5000)
+        self.check_status_timer.setInterval(
+            self.config['check_status_interval_msec'])
 
-        # Monitor online status.
+        # Watchers.
         self.network_manager = QNetworkConfigurationManager(self)
+        self.file_system_watcher = QFileSystemWatcher([config_filename], self)
 
     status_changed = pyqtSignal(str)
 
@@ -58,11 +65,16 @@ class Worker(QObject):
         else:
             logging.debug('Status remains %s', new_status)
 
+    def load_config(self):
+        self.config = yaml.load(open(config_filename, encoding='utf-8'))
+
     def app_started(self):
         """Things to do when the app has started"""
         self.check_status_timer.timeout.connect(self.check_status)
         self.check_status_timer.start()
+
         self.network_manager.onlineStateChanged.connect(self.check_status)
+        self.file_system_watcher.fileChanged.connect(self.load_config)
 
         self.check_status()  # Initial check.
 
@@ -71,28 +83,36 @@ class Worker(QObject):
         self.update_status()
 
         # Actions.
-        if self.auto_login and self.status == 'OFFLINE':
+        if self.config['auto_login'] and self.status == 'OFFLINE':
             self.login()
 
     def update_status(self):
         """Update current status"""
         logging.debug('Updating status')
 
-        if not self.network_manager.isOnline():
-            self.status = 'NO_CONNECTION'
-            return
-
-        # TODO: Implement.
-        sleep(1)
-        self.status = choice(['OFFLINE', 'ONLINE', 'UNKNOWN_ACCOUNT_ONLINE',
-                              'NETWORK_ERROR'])
+        try:
+            if not self.network_manager.isOnline():
+                self.status = 'NO_CONNECTION'
+            else:
+                session = self.account.status()
+                if session:  # Online now.
+                    self.session = session
+                    if session[0] == self.account.username:
+                        self.status = 'ONLINE'
+                    else:
+                        self.status = 'UNKNOWN_ACCOUNT_ONLINE'
+                else:
+                    self.status = 'OFFLINE'
+        except ConnectionError as e:
+            logging.error('Failed to update status: %s', e)
+            self.status = 'NETWORK_ERROR'
 
     def login(self):
         self.status = 'LOGGING_IN'
-        self.manager.login()
+        self.account.login()  # TODO: More attempts?
         self.update_status()
 
     def logout(self):
         self.status = 'LOGGING_OUT'
-        self.manager.logout()
+        self.account.logout()  # TODO: More attempts?
         self.update_status()

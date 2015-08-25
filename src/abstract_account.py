@@ -47,7 +47,7 @@ class AbstractAccount(object):
 
     @staticmethod
     def status(self):
-        """Return (username, session_start_byte, session_time) if logged in,
+        """Return (username, session_start_byte, session_sec) if logged in,
         None if not.
         Raise ConnectionError if cannot connect to login server."""
         raise ConnectionError()
