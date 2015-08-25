@@ -26,8 +26,18 @@ class NetDotTsinghuaApplication(QApplication):
         self.tray = QSystemTrayIcon(QIcon(":/icon.png"), self)
         self.tray_menu = QMenu()
 
-        self.status_action = self.tray_menu.addAction('')
+        # Set up tray menu.
+        self.status_action = self.tray_menu.addAction('在线 2小时43分钟 - 3.23G')
+        # self.tray_menu.addAction('本次使用 3.23G').setEnabled(False)
+        self.auto_manage_action = self.tray_menu.addAction('自动管理')
+        self.auto_manage_action.setCheckable(True)
         self.status_action.setEnabled(False)
+
+        self.tray_menu.addSeparator()
+        self.tray_menu.addAction('lisihan13').setEnabled(False)
+        self.tray_menu.addAction('已用 4.20G，上限 21.45G').setEnabled(False)
+        # self.tray_menu.addAction('余额 1.45 元').setEnabled(False)
+        self.tray_menu.addAction('上次更新：5分钟前').setEnabled(False)
 
         self.tray_menu.addSeparator()
         self.tray_menu.addAction('退出').triggered.connect(self.quit)
