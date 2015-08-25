@@ -41,12 +41,12 @@ class AbstractAccount(object):
         return False
 
     @staticmethod
-    def logout(self):
+    def logout():
         """Return True on success, False otherwise."""
         return False
 
     @staticmethod
-    def status(self):
+    def status():
         """Return (username, session_start_byte, session_sec) if logged in,
         None if not.
         Raise ConnectionError if cannot connect to login server."""
