@@ -34,6 +34,8 @@ class TsinghuaAccount(AbstractAccount):
     def update(self):
         """Update infos of the account.
         Return True on success, False otherwise."""
+        if not self.username:  # Empty username.
+            return False
         try:
             s = Session()
 

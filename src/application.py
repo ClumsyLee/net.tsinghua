@@ -91,21 +91,26 @@ class NetDotTsinghuaApplication(QApplication):
         self.status_action.setText(STATUSES[status])
 
     def refresh_account_info(self, acc):
-        self.username_action.setText(acc.username)
-
-        if acc.last_check is None:
+        if not acc.username:  # Account not set
+            self.username_action.setText('未设置账户')
             self.usage_action.setVisible(False)
+            self.last_check_action.setVisible(False)
         else:
-            self.usage_action.setVisible(True)
-            if acc.byte is None:
-                text = '用户名 / 密码错误'
+            self.username_action.setText(acc.username)
+            if acc.last_check is None:
+                self.usage_action.setVisible(False)
             else:
-                text = '已用 {:.1f}G，上限 {:.1f}G'.format(acc.byte / GB,
-                                                         acc.max_byte / GB)
-            self.usage_action.setText(text)
+                self.usage_action.setVisible(True)
+                if acc.byte is None:
+                    text = '用户名 / 密码错误'
+                else:
+                    text = '已用 {:.1f}G，上限 {:.1f}G'.format(acc.byte / GB,
+                                                             acc.max_byte / GB)
+                self.usage_action.setText(text)
 
-        self.last_check_action.setText(
-            '上次更新：{}'.format(_time_passed_str(acc.last_check)))
+            self.last_check_action.setVisible(True)
+            self.last_check_action.setText(
+                '上次更新：{}'.format(_time_passed_str(acc.last_check)))
 
     def config_reloaded(self, config):
         self.auto_manage_action.setChecked(config['auto_manage'])
