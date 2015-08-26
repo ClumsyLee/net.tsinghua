@@ -1,4 +1,4 @@
-auto_manage: false
+auto_manage: true
 check_account_info_interval_msec: 60000
 check_status_interval_msec: 10000
 username: lisihan13
