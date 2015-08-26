@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 from PyQt5.QtGui import QIcon
 
 from worker import Worker
+from config import load_config, save_config
 import resource
 
 STATUSES = {
@@ -53,6 +54,7 @@ class NetDotTsinghuaApplication(QApplication):
         self.status_action = self.add_unabled_action('无连接')
         self.auto_manage_action = self.tray_menu.addAction('自动管理')
         self.auto_manage_action.setCheckable(True)
+        self.auto_manage_action.toggled.connect(self.auto_manage_changed)
         self.config_reloaded(self.worker.config)
 
         # Account info section.
@@ -107,6 +109,11 @@ class NetDotTsinghuaApplication(QApplication):
 
     def config_reloaded(self, config):
         self.auto_manage_action.setChecked(config['auto_manage'])
+
+    def auto_manage_changed(self, enable):
+        config = load_config()
+        config['auto_manage'] = enable
+        save_config(config)
 
 if __name__ == '__main__':
     import sys

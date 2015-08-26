@@ -1,6 +1,5 @@
 from copy import deepcopy
 import logging
-import yaml
 
 # Used for simulation.
 # TODO: Remove these lines.
@@ -11,13 +10,11 @@ from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QThread, QFileSystemWatche
 from PyQt5.QtNetwork import QNetworkConfigurationManager, QNetworkConfiguration
 
 from tsinghua_account import TsinghuaAccount, AbstractAccount
-
-CONFIG_FILENAME = 'config.yml'
+from config import load_config, CONFIG_FILENAME
 
 class Worker(QObject):
     """Worker"""
-    def __init__(self, parent=None, config_filename=CONFIG_FILENAME,
-                 account_class=TsinghuaAccount):
+    def __init__(self, parent=None, account_class=TsinghuaAccount):
         super().__init__(parent)
 
         # Possible statuses:
@@ -28,7 +25,6 @@ class Worker(QObject):
         #     UNKNOWN_ACCOUNT_ONLINE
         #     LOGGING_OUT
         #     NETWORK_ERROR
-        self.config_filename = config_filename
         self.account_class = account_class
 
         self.config = None
@@ -41,7 +37,7 @@ class Worker(QObject):
 
         # Watchers.
         self.network_manager = QNetworkConfigurationManager(self)
-        self.file_system_watcher = QFileSystemWatcher([config_filename], self)
+        self.file_system_watcher = QFileSystemWatcher([CONFIG_FILENAME], self)
 
         self.load_config()  # Load configurations at last.
         self.account = account_class(self.config['username'])
@@ -70,7 +66,7 @@ class Worker(QObject):
             logging.debug('Status remains %s', new_status)
 
     def load_config(self):
-        self.config = yaml.load(open(self.config_filename, encoding='utf-8'))
+        self.config = load_config()
 
         # Apply configs.
         self.check_status_timer.setInterval(
