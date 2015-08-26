@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 import logging
 
-from PyQt5.QtCore import pyqtSignal, QThread
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
 from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 from PyQt5.QtGui import QIcon
 
 from worker import Worker
-from config import load_config, save_config
+from config import load_config, save_config, AccountSettingDialog
 import resource
 
 STATUSES = {
@@ -41,6 +41,7 @@ class NetDotTsinghuaApplication(QApplication):
     """docstring for NetDotTsinghuaApplication"""
     def __init__(self, argv):
         super().__init__(argv)
+        self.setQuitOnLastWindowClosed(False)  # Run without windows.
 
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -62,6 +63,8 @@ class NetDotTsinghuaApplication(QApplication):
         self.username_action = self.add_unabled_action()
         self.usage_action = self.add_unabled_action()
         self.last_check_action = self.add_unabled_action()
+        self.account_setting_action = self.tray_menu.addAction('账户设置')
+        self.account_setting_action.triggered.connect(self.account_setting)
         self.refresh_account_info(self.worker.account)
 
         self.tray_menu.addSeparator()
@@ -119,6 +122,27 @@ class NetDotTsinghuaApplication(QApplication):
         config = load_config()
         config['auto_manage'] = enable
         save_config(config)
+
+    @pyqtSlot()
+    def account_setting(self):
+        dialog = AccountSettingDialog()
+        dialog.show()
+        if dialog.exec():
+            config = load_config()
+
+            # Delete the password of the old account, if exists.
+            old_acc = self.worker.account_class(config['username'])
+            if old_acc.password is not None:
+                del old_acc.password
+
+            username = dialog.username.text()
+            # Set password if needed.
+            if username:
+                acc = self.worker.account_class(username)
+                acc.password = dialog.password.text()
+
+            config['username'] = username
+            save_config(config)
 
 if __name__ == '__main__':
     import sys

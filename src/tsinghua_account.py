@@ -54,6 +54,8 @@ class TsinghuaAccount(AbstractAccount):
                 r.raise_for_status()
                 return self.__parse_info_page(r.text)
             else:
+                logging.error('Username/password incorrect (username: {})'
+                              .format(self.username))
                 self.balance = self.byte = self.max_byte = None
                 self.last_check = datetime.today()
                 return True
