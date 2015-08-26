@@ -79,13 +79,18 @@ class Worker(QObject):
             self.config['check_account_info_interval_msec'])
 
     def reload_config(self):
-        logging.info('Reloading configuration file.')
+        logging.info('Reloading configuration file')
         self.load_config()
         self.config_reloaded.emit(deepcopy(self.config))
 
         # Check for user change.
         if self.account.username != self.config['username']:
-            self.account = account_class(self.config['username'])
+            logging.info('Username changed from {} to {}'
+                         .format(self.account.username,
+                                 self.config['username']))
+            self.account = self.account_class(self.config['username'])
+            # Emit the bare account immediately for a quick response.
+            self.account_info_changed.emit(deepcopy(self.account))
             self.update_account_info()
 
     def app_started(self):
@@ -132,8 +137,10 @@ class Worker(QObject):
             self.status = 'NETWORK_ERROR'
 
     def update_account_info(self):
+        logging.debug('Updating account info')
         if self.network_manager.isOnline() and self.account.update():
             self.account_info_changed.emit(deepcopy(self.account))
+            logging.info('Account info updated')
 
     def login(self):
         self.status = 'LOGGING_IN'
