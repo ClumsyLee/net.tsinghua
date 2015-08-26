@@ -1,3 +1,4 @@
+from copy import deepcopy
 import logging
 import yaml
 
@@ -9,13 +10,14 @@ from random import choice
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer, QThread, QFileSystemWatcher
 from PyQt5.QtNetwork import QNetworkConfigurationManager, QNetworkConfiguration
 
-from tsinghua_account import TsinghuaAccount
+from tsinghua_account import TsinghuaAccount, AbstractAccount
 
 CONFIG_FILENAME = 'config.yml'
 
 class Worker(QObject):
     """Worker"""
-    def __init__(self, parent=None, config_filename=CONFIG_FILENAME):
+    def __init__(self, parent=None, config_filename=CONFIG_FILENAME,
+                 account_class=TsinghuaAccount):
         super().__init__(parent)
 
         # Possible statuses:
@@ -27,20 +29,26 @@ class Worker(QObject):
         #     LOGGING_OUT
         #     NETWORK_ERROR
         self.config_filename = config_filename
-        self.config = None
+        self.account_class = account_class
 
+        self.config = None
         self._status = 'NO_CONNECTION'
         self.session = None
-        self.account = None
+
+        # Timers.
         self.check_status_timer = QTimer(self)
+        self.check_account_info_timer = QTimer(self)
 
         # Watchers.
         self.network_manager = QNetworkConfigurationManager(self)
         self.file_system_watcher = QFileSystemWatcher([config_filename], self)
 
         self.load_config()  # Load configurations at last.
+        self.account = account_class(self.config['username'])
 
     status_changed = pyqtSignal(str)
+    account_info_changed = pyqtSignal(AbstractAccount)
+    config_reloaded = pyqtSignal(dict)
 
     @property
     def status(self):
@@ -62,31 +70,44 @@ class Worker(QObject):
             logging.debug('Status remains %s', new_status)
 
     def load_config(self):
-        if self.config:
-            logging.info('Reloading configuration file.')
         self.config = yaml.load(open(self.config_filename, encoding='utf-8'))
 
         # Apply configs.
         self.check_status_timer.setInterval(
             self.config['check_status_interval_msec'])
-        self.account = TsinghuaAccount(self.config['username'])
+        self.check_account_info_timer.setInterval(
+            self.config['check_account_info_interval_msec'])
+
+    def reload_config(self):
+        logging.info('Reloading configuration file.')
+        self.load_config()
+        self.config_reloaded.emit(deepcopy(self.config))
+
+        # Check for user change.
+        if self.account.username != self.config['username']:
+            self.account = account_class(self.config['username'])
+            self.update_account_info()
 
     def app_started(self):
         """Things to do when the app has started"""
         self.check_status_timer.timeout.connect(self.check_status)
         self.check_status_timer.start()
+        self.check_account_info_timer.timeout.connect(self.update_account_info)
+        self.check_account_info_timer.start()
 
         self.network_manager.onlineStateChanged.connect(self.check_status)
-        self.file_system_watcher.fileChanged.connect(self.load_config)
+        self.file_system_watcher.fileChanged.connect(self.reload_config)
 
-        self.check_status()  # Initial check.
+        # Initial check.
+        self.check_status()
+        self.update_account_info()
 
     def check_status(self):
         """Check current status, take actions if needed"""
         self.update_status()
 
         # Actions.
-        if self.config['auto_login'] and self.status == 'OFFLINE':
+        if self.config['auto_manage'] and self.status == 'OFFLINE':
             self.login()
 
     def update_status(self):
@@ -109,6 +130,10 @@ class Worker(QObject):
         except ConnectionError as e:
             logging.error('Failed to update status: %s', e)
             self.status = 'NETWORK_ERROR'
+
+    def update_account_info(self):
+        if self.network_manager.isOnline() and self.account.update():
+            self.account_info_changed.emit(deepcopy(self.account))
 
     def login(self):
         self.status = 'LOGGING_IN'
