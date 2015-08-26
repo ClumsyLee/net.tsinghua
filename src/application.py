@@ -92,9 +92,9 @@ class NetDotTsinghuaApplication(QApplication):
         self.username_action.setText(acc.username)
 
         if acc.last_check is None:
-            self.usage_action.hide()
+            self.usage_action.setVisible(False)
         else:
-            self.usage_action.show()
+            self.usage_action.setVisible(True)
             if acc.byte is None:
                 text = '用户名 / 密码错误'
             else:
