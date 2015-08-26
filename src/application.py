@@ -42,6 +42,7 @@ class NetDotTsinghuaApplication(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.setQuitOnLastWindowClosed(False)  # Run without windows.
+        self.account_setting_dialog = None
 
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -125,8 +126,20 @@ class NetDotTsinghuaApplication(QApplication):
 
     @pyqtSlot()
     def account_setting(self):
-        dialog = AccountSettingDialog()
+        if self.account_setting_dialog is None:
+            self.account_setting_dialog = AccountSettingDialog()
+            existed = False
+        else:
+            existed = True
+
+        dialog = self.account_setting_dialog
         dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
+
+        if existed:  # Avoid multiple dialogs.
+            return
+
         if dialog.exec():
             config = load_config()
 
@@ -143,6 +156,8 @@ class NetDotTsinghuaApplication(QApplication):
 
             config['username'] = username
             save_config(config)
+
+        self.account_setting_dialog = None
 
 if __name__ == '__main__':
     import sys
