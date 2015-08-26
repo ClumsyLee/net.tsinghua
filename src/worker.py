@@ -140,7 +140,8 @@ class Worker(QObject):
         logging.debug('Updating account info')
         if self.network_manager.isOnline() and self.account.update():
             self.account_info_changed.emit(deepcopy(self.account))
-            logging.info('Account info updated')
+            logging.info('Account info of {} updated'
+                         .format(self.account.username))
 
     def login(self):
         self.status = 'LOGGING_IN'
