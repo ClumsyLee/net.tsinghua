@@ -56,8 +56,8 @@ class NetDotTsinghuaApplication(QApplication):
         self.status_action = self.add_unabled_action('无连接')
         self.auto_manage_action = self.tray_menu.addAction('自动管理')
         self.auto_manage_action.setCheckable(True)
-        self.auto_manage_action.toggled.connect(self.auto_manage_changed)
         self.config_reloaded(self.worker.config)
+        self.auto_manage_action.toggled.connect(self.auto_manage_changed)
 
         # Account info section.
         self.tray_menu.addSeparator()
@@ -117,9 +117,15 @@ class NetDotTsinghuaApplication(QApplication):
                 '上次更新：{}'.format(_time_passed_str(acc.last_check)))
 
     def config_reloaded(self, config):
-        self.auto_manage_action.setChecked(config['auto_manage'])
+        """Adjust tray menu if config changes."""
+        enable = config['auto_manage']
+        if self.auto_manage_action.isChecked() != enable:
+            logging.info('auto_manage %s (by config)', 'on' if enable else 'off')
+            self.auto_manage_action.setChecked(enable)
 
     def auto_manage_changed(self, enable):
+        """Set `auto_manage` from tray menu."""
+        logging.info('auto_manage %s (by tray menu)', 'on' if enable else 'off')
         config = load_config()
         config['auto_manage'] = enable
         save_config(config)
