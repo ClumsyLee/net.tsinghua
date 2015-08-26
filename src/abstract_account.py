@@ -5,6 +5,7 @@ class AbstractAccount(object):
     def __init__(self, username):
         super().__init__()
         self.username = username
+
         self.balance = None
         self.byte = None
         self.max_byte = None
@@ -29,15 +30,11 @@ class AbstractAccount(object):
 
     def update(self):
         """Update infos of the account.
-        Return True on success, False if network errors occur.
-        Raise ValueError if the username/password is incorrect, or the password
-        has not been set."""
+        Return True on success, False otherwise."""
         return False
 
     def login(self):
-        """Return True on success, False if network errors occur.
-        Raise ValueError if the username/password is incorrect, or the password
-        has not been set."""
+        """Return True on success, False otherwise."""
         return False
 
     @staticmethod

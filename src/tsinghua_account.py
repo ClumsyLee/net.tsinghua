@@ -24,32 +24,37 @@ class TsinghuaAccount(AbstractAccount):
     def __init__(self, username):
         super().__init__(username)
 
+    @property
+    def md5_pass(self):
+        password = self.password
+        if password is None:
+            password = ''
+        return md5(password.encode()).hexdigest()
+
     def update(self):
         """Update infos of the account.
-        Return True on success, False if network errors occur.
-        Raise ValueError if the username/password is incorrect, or the password
-        has not been set."""
-        if self.password is None:
-            raise ValueError('Password of user {} has not been set'
-                             .format(self.username))
+        Return True on success, False otherwise."""
         try:
             s = Session()
 
             # Login.
             payload = dict(action='login',
                            user_login_name=self.username,
-                           user_password=md5(self.password.encode()).hexdigest())
+                           user_password=self.md5_pass)
             # FIXME: Will cause warnings.
             r = s.post(self.USEREG_LOGIN_PAGE, payload, verify=False)
             r.raise_for_status()
-            if r.text != 'ok':
-                raise ValueError('Incorrect username / password for user {}'
-                                 .format(self.username))
-            # Parse.
-            # FIXME: Will cause warnings.
-            r = s.get(self.USEREG_INFO_PAGE, verify=False)
-            r.raise_for_status()
-            return self.__parse_info_page(r.text)
+
+            if r.text == 'ok':
+                # Parse.
+                # FIXME: Will cause warnings.
+                r = s.get(self.USEREG_INFO_PAGE, verify=False)
+                r.raise_for_status()
+                return self.__parse_info_page(r.text)
+            else:
+                self.balance = self.byte = self.max_byte = None
+                self.last_check = datetime.today()
+                return True
 
         except RequestException as e:
             logging.error('Failed to update info: %s', e)
@@ -84,9 +89,7 @@ class TsinghuaAccount(AbstractAccount):
         return 0  # TODO: Implement.
 
     def login(self):
-        """Return True on success, False if network errors occur.
-        Raise ValueError if the username/password is incorrect, or the password
-        has not been set."""
+        """Return True on success, False otherwise."""
         return False  # TODO: Implement.
 
     @staticmethod
