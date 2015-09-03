@@ -177,17 +177,14 @@ class Account(object):
 
         self.last_session = None
         self.sessions = []
-        self.last_check = None
 
         self.balance = None
         self.byte = None
 
     def __str__(self):
-        date_str = self.last_check.isoformat(' ') if self.last_check else None
         return ('Tsinghua account {}: {}\n'
                 '  last_session: {}\n'
                 '  sessions: {}\n'
-                '  last_check: {}\n'
                 '  balance: {}\n'
                 '  byte: {}').format(self.username, self.status,
                                      self.last_session,
@@ -272,7 +269,6 @@ class Account(object):
             infos = usereg.account_info()
 
             self.sessions = sessions
-            self.last_check = datetime.now()
             self.byte = infos['byte']
             self.balance = infos['balance']
 
