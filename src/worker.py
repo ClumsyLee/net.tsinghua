@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5.QtCore import QObject, QTimer
 
 from tsinghua import Account
@@ -43,3 +45,17 @@ class Worker(QObject):
             self.account.login()
 
         # TODO: Auto logout, etc.
+
+    def auto_manage_changed(self, enable):
+        logging.info('Turning auto_manage %s', 'on' if enable else 'off')
+        self.config['auto_manage'] = enable
+
+    def username_changed(self, username):
+        logging.info('Changing username from %s to %s', self.account.username,
+                                                        username)
+        del self.account.password
+        self.account.username = username
+        self.account.balance = self.account.byte = None
+
+        self.account.update_status()
+        self.account.update_infos()

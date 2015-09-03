@@ -9,17 +9,14 @@ from worker import Worker
 from config import load_config, save_config, AccountSettingDialog
 import resource
 
-STATUSES = {
-'NO_CONNECTION': '无连接',
+STATUS_STR = {
+'UNKNOWN': '未知',
 'OFFLINE': '离线',
-'LOGGING_IN': '上线中…',
 'ONLINE': '在线',
-'UNKNOWN_ACCOUNT_ONLINE': '他人账号在线',
-'LOGGING_OUT': '下线中…',
-'NETWORK_ERROR': '网络错误'
+'OTHERS_ACCOUNT_ONLINE': '他人账号在线',
+'ERROR': '网络错误',
+'NO_CONNECTION': '无连接'
 }
-
-GB = 1024**3
 
 def _time_passed_str(t):
     if t is None:
@@ -36,9 +33,53 @@ def _time_passed_str(t):
 
     return '{}天前'.format(delta.days)
 
+def _usage_str(byte):
+    if byte is None:
+        return '未知'
+    elif byte < int(10e3):
+        return '{}B'.format(byte)
+    elif byte < int(10e6):
+        return '{:.2f}K'.format(byte / 10e3)
+    elif byte < int(10e9):
+        return '{:.2fM}'.format(byte / 10e6)
+    else:
+        return '{:.2fG}'.format(byte / 10e9)
+
+def _balance_str(balance):
+    if balance is None:
+        return '未知'
+    else:
+        return '{:.2f}元'.format(balance)
+
+class SessionMenu(QMenu):
+    """Session menu"""
+    logged_out = pyqtSignal()
+
+    def __init__(self, session):
+        super().__init__()
+        self.session = session
+
+        self.addAction(session.ip)
+        self.start_time = self.addAction('')
+        self.update_time()
+        self.addAction('下线').toggled.connect(self.logout)
+
+        self.aboutToShow.connect(self.update_time)
+
+    def logout(self):
+        try:
+            self.session.logout()
+            self.logged_out.emit()
+        except ConnectionError:
+            pass
+
+    def update_time(self):
+        self.start_time.setText(_time_passed_str(self.session.start_time) +
+                                '上线')
+
 
 class NetDotTsinghuaApplication(QApplication):
-    """docstring for NetDotTsinghuaApplication"""
+    """NetDotTsinghuaApplication"""
     def __init__(self, argv):
         super().__init__(argv)
         self.setQuitOnLastWindowClosed(False)  # Run without windows.
@@ -48,38 +89,64 @@ class NetDotTsinghuaApplication(QApplication):
         self.worker_thread = QThread()
         self.worker.moveToThread(self.worker_thread)
 
+        config = self.worker.config
+        acc = self.worker.account
+
         # Set up tray menu.
         self.tray = QSystemTrayIcon(QIcon(":/icon.png"), self)
         self.tray_menu = QMenu()
 
-        # Config section.
-        self.status_action = self.add_unabled_action('无连接')
-        self.auto_manage_action = self.tray_menu.addAction('自动管理')
-        self.auto_manage_action.setCheckable(True)
-        self.config_reloaded(self.worker.config)
-        self.auto_manage_action.toggled.connect(self.auto_manage_changed)
+        # Status section.
+        self.status_action = self.add_unabled_action()
+        self.status_changed(self.worker.account.status)
 
         # Account info section.
         self.tray_menu.addSeparator()
         self.username_action = self.add_unabled_action()
         self.usage_action = self.add_unabled_action()
+        self.balance_action = self.add_unabled_action()
+        self.refresh_username(config['username'])
+        self.refresh_account_info(None, None)
+
+        # Sessions section.
+        self.sessions = []
+        self.session_actions = []
+        self.last_check = None
+
+        self.sessions_title_action = self.add_unabled_action()
         self.last_check_action = self.add_unabled_action()
+        self.refresh_sessions([])
+
+        self.tray_menu.aboutToShow.connect(self.update_time)
+
+        # Config section.
+        self.tray_menu.addSeparator()
+        self.auto_manage_action = self.tray_menu.addAction('自动管理')
+        self.auto_manage_action.setCheckable(config['auto_manage'])
+        self.auto_manage_action.toggled.connect(self.worker.auto_manage_changed)
+
         self.account_setting_action = self.tray_menu.addAction('账户设置')
         self.account_setting_action.triggered.connect(self.account_setting)
-        self.refresh_account_info(self.worker.account)
 
+        # Quit.
         self.tray_menu.addSeparator()
         self.tray_menu.addAction('退出').triggered.connect(self.quit)
 
         self.tray.setContextMenu(self.tray_menu)
         self.tray.show()
 
-        self.app_started.connect(self.worker.app_started)
-        self.worker.status_changed.connect(self.status_changed)
-        self.worker.account_info_changed.connect(self.refresh_account_info)
-        self.worker.config_reloaded.connect(self.config_reloaded)
+        # Connect signals.
+        self.start_worker.connect(self.worker.setup)
+        self.username_changed.connect(self.refresh_username)
+        self.username_changed.connect(self.worker.username_changed)
 
-    app_started = pyqtSignal()
+        acc.status_changed.connect(self.status_changed)
+        acc.info_updated.connect(self.refresh_account_info)
+        acc.current_session_updated.connect(self.status_changed)
+        acc.sessions_updated.connect(self.refresh_sessions)
+
+    start_worker = pyqtSignal()
+    username_changed = pyqtSignal(str)
 
     def add_unabled_action(self, text=''):
         action = self.tray_menu.addAction(text)
@@ -88,47 +155,60 @@ class NetDotTsinghuaApplication(QApplication):
 
     def exec(self):
         self.worker_thread.start()
-        self.app_started.emit()  # Start timers & check status.
+        self.start_worker.emit()  # Start timers & check status.
         return super().exec()
 
     def status_changed(self, status):
         self.status_action.setText(STATUSES[status])
 
-    def refresh_account_info(self, acc):
-        if not acc.username:  # Account not set
-            self.username_action.setText('未设置账户')
+        if status == 'ONLINE'
+            self.tray.showMessage('当前在线', '本人账户在线')
+        elif status == 'OTHERS_ACCOUNT_ONLINE':
+            self.tray.showMessage('当前在线', '他人账户在线')
+        elif status == 'OFFLINE':
+            self.tray.showMessage('当前离线', '可以登录校园网')
+
+    def refresh_username(self, username):
+        if username is None:
+            self.username_action.setText('未设置用户')
             self.usage_action.setVisible(False)
-            self.last_check_action.setVisible(False)
+            self.balance_action.setVisible(False)
         else:
-            self.username_action.setText(acc.username)
-            if acc.last_check is None:
-                self.usage_action.setVisible(False)
-            else:
-                self.usage_action.setVisible(True)
-                if acc.byte is None:
-                    text = '用户名 / 密码错误'
-                else:
-                    text = '已用 {:.1f}G，上限 {:.1f}G'.format(acc.byte / GB,
-                                                             acc.max_byte / GB)
-                self.usage_action.setText(text)
+            self.username_action.setText(username)
+            self.usage_action.setVisible(True)
+            self.balance_action.setVisible(True)
 
-            self.last_check_action.setVisible(True)
-            self.last_check_action.setText(
-                '上次更新：{}'.format(_time_passed_str(acc.last_check)))
+    def refresh_account_info(self, balance, byte):
+        self.usage_action.setText('本月流量：{}'.format(_usage_str(byte)))
+        self.balance_action.setText('当前余额：{}'.format(_balance_str(balance)))
 
-    def config_reloaded(self, config):
-        """Adjust tray menu if config changes."""
-        enable = config['auto_manage']
-        if self.auto_manage_action.isChecked() != enable:
-            logging.info('auto_manage %s (by config)', 'on' if enable else 'off')
-            self.auto_manage_action.setChecked(enable)
+    def refresh_sessions(self, sessions):
+        self.sessions = sessions
+        self.last_check = datetime.now()
 
-    def auto_manage_changed(self, enable):
-        """Set `auto_manage` from tray menu."""
-        logging.info('auto_manage %s (by tray menu)', 'on' if enable else 'off')
-        config = load_config()
-        config['auto_manage'] = enable
-        save_config(config)
+        if len(sessions):
+            self.sessions_title_action.setText('当前在线')
+        else:
+            self.sessions_title_action.setText('无设备在线')
+
+        new_actions = []
+        for session in sessions:
+            menu = SessionMenu(session)
+            menu.setText(session.device_name)
+            # Update infos if logged out.
+            menu.logged_out.connect(self.worker.account.update_infos)
+            new_actions.append(menu)
+
+        # Remove old actions & add new actions.
+        for action in self.session_actions:
+            self.tray_menu.removeAction(action)
+
+        self.tray_menu.insertActions(last_check_action, new_actions)
+        self.session_actions = new_actions
+
+    def update_time(self):
+        self.last_check_action.setText(
+            '上次更新：{}'.format(_time_passed_str(self.last_check)))
 
     @pyqtSlot()
     def account_setting(self):
@@ -147,21 +227,16 @@ class NetDotTsinghuaApplication(QApplication):
             return
 
         if dialog.exec():
-            config = load_config()
-
-            # Delete the password of the old account, if exists.
-            old_acc = self.worker.account_class(config['username'])
-            if old_acc.password is not None:
-                del old_acc.password
-
             username = dialog.username.text()
             # Set password if needed.
             if username:
                 acc = self.worker.account_class(username)
                 acc.password = dialog.password.text()
 
-            config['username'] = username
-            save_config(config)
+            # If username changed, emit signal and clear current account info.
+            if username != self.worker.account.username:
+                self.username_changed.emit(username)
+                self.refresh_account_info(None, None)
 
         self.account_setting_dialog = None
 
