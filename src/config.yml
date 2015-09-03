@@ -1,4 +1,5 @@
 auto_manage: true
-check_account_info_interval_msec: 60000
-check_status_interval_msec: 10000
+auto_manage_interval_msec: 10000
+info_update_interval_msec: 20000
+status_update_interval_msec: 10000
 username: lisihan13
