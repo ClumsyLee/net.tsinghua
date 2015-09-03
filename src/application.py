@@ -11,7 +11,7 @@ from config import load_config, save_config, AccountSettingDialog
 import resource
 
 STATUS_STR = {
-'UNKNOWN': '未知',
+'UNKNOWN': '未知状态',
 'OFFLINE': '离线',
 'ONLINE': '在线',
 'OTHERS_ACCOUNT_ONLINE': '他人账号在线',
@@ -158,6 +158,8 @@ class NetDotTsinghuaApplication(QApplication):
     def exec(self):
         self.worker_thread.start()
         self.start_worker.emit()  # Start timers & check status.
+
+        logging.debug('GUI thread enters event loop')
         return super().exec()
 
     def status_changed(self, status):
@@ -255,7 +257,7 @@ if __name__ == '__main__':
     logging.basicConfig(
         format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.INFO)
+        level=logging.DEBUG)
     app = NetDotTsinghuaApplication(sys.argv)
 
     sys.exit(app.exec())
