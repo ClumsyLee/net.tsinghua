@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from hashlib import md5
 import logging
@@ -6,6 +7,7 @@ from re import match
 from bs4 import BeautifulSoup
 from requests import get, post, Session as _Session, RequestException
 from keyring import set_password, get_password, delete_password
+from PyQt5.QtCore import QObject, pyqtSignal
 
 def _head_int(s):
     return int(match(r'\d+', s).group())
@@ -161,7 +163,7 @@ class Usereg(object):
                                   .format(session_id, e))
 
 
-class Account(object):
+class Account(QObject):
     """Tsinghua account"""
     SERVICE_NAME = 'net.tsinghua'
 
@@ -169,11 +171,16 @@ class Account(object):
     STATUS_PAGE = BASE_URL + '/rad_user_info.php'
     LOGIN_PAGE = BASE_URL + '/do_login.php'
 
+    status_changed = pyqtSignal(str)
+    info_updated = pyqtSignal(float, int)  # Balance, byte.
+    current_session_updated = pyqtSignal(Session)
+    sessions_updated = pyqtSignal(list)
+
     def __init__(self, username):
         super().__init__()
         self.username = username
 
-        self.status = None
+        self._status = None
 
         self.last_session = None
         self.sessions = []
@@ -192,6 +199,16 @@ class Account(object):
                                      date_str,
                                      self.balance,
                                      self.byte)
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, new_status):
+        if self._status != new_status:
+            self._status = new_status
+            self.status_changed.emit(self._status)
 
     @property
     def password(self):
@@ -251,12 +268,14 @@ class Account(object):
                     ip=ip,
                     start_time=start_time,
                     byte=byte)
+                self.current_session_updated.emit(deepcopy(self.last_session))
                 self.status = 'ONLINE'
 
                 # If self online, update account infos.
                 if username == self.username:
-                    self.byte = total_byte
                     self.balance = balance
+                    self.byte = total_byte
+                    self.info_updated.emit(self.balance, self.byte)
 
         except (RequestException, ValueError) as e:
             logging.error('Failed to update status: %s', e)
@@ -269,8 +288,11 @@ class Account(object):
             infos = usereg.account_info()
 
             self.sessions = sessions
-            self.byte = infos['byte']
+            self.sessions_updated.emit(deepcopy(self.sessions))
+
             self.balance = infos['balance']
+            self.byte = infos['byte']
+            self.info_updated.emit(self.balance, self.byte)
 
         except (ConnectionError, ValueError) as e:
             logging.error('Failed to update account info: %s', e)
