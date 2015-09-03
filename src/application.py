@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
 from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 from PyQt5.QtGui import QIcon
 
+from tsinghua import Account
 from worker import Worker
 from config import load_config, save_config, AccountSettingDialog
 import resource
@@ -113,6 +114,7 @@ class NetDotTsinghuaApplication(QApplication):
         self.session_actions = []
         self.last_check = None
 
+        self.tray_menu.addSeparator()
         self.sessions_title_action = self.add_unabled_action()
         self.last_check_action = self.add_unabled_action()
         self.refresh_sessions([])
@@ -159,9 +161,9 @@ class NetDotTsinghuaApplication(QApplication):
         return super().exec()
 
     def status_changed(self, status):
-        self.status_action.setText(STATUSES[status])
+        self.status_action.setText(STATUS_STR[status])
 
-        if status == 'ONLINE'
+        if status == 'ONLINE':
             self.tray.showMessage('当前在线', '本人账户在线')
         elif status == 'OTHERS_ACCOUNT_ONLINE':
             self.tray.showMessage('当前在线', '他人账户在线')
@@ -183,6 +185,8 @@ class NetDotTsinghuaApplication(QApplication):
         self.balance_action.setText('当前余额：{}'.format(_balance_str(balance)))
 
     def refresh_sessions(self, sessions):
+        logging.debug('Refreshing sessions section in the menu')
+
         self.sessions = sessions
         self.last_check = datetime.now()
 
@@ -203,7 +207,7 @@ class NetDotTsinghuaApplication(QApplication):
         for action in self.session_actions:
             self.tray_menu.removeAction(action)
 
-        self.tray_menu.insertActions(last_check_action, new_actions)
+        self.tray_menu.insertActions(self.last_check_action, new_actions)
         self.session_actions = new_actions
 
     def update_time(self):
@@ -230,7 +234,7 @@ class NetDotTsinghuaApplication(QApplication):
             username = dialog.username.text()
             # Set password if needed.
             if username:
-                acc = self.worker.account_class(username)
+                acc = Account(username)
                 acc.password = dialog.password.text()
 
             # If username changed, emit signal and clear current account info.

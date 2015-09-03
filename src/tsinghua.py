@@ -255,7 +255,8 @@ class Account(QObject):
         return real
 
     def setup(self):
-        self.network_manager.onlineStateChanged.connect(online_state_changed)
+        self.network_manager.onlineStateChanged.connect(
+            self.online_state_changed)
         # First shot.
         if self.network_manager.isOnline():
             self.update_status()

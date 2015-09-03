@@ -11,12 +11,12 @@ class Worker(QObject):
         super().__init__(parent)
 
         self.config = load_config()
-        self.account = Account(config['username'])
+        self.account = Account(self.config['username'])
 
         # Timers.
         self.status_timer = QTimer(self)
         self.info_timer = QTimer(self)
-        self.auto_manage_timer = Qtimer(self)
+        self.auto_manage_timer = QTimer(self)
         self.status_timer.setInterval(self.config['status_update_interval_msec'])
         self.info_timer.setInterval(self.config['info_update_interval_msec'])
         self.auto_manage_timer.setInterval(self.config['auto_manage_interval_msec'])
