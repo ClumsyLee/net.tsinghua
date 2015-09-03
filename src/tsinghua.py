@@ -183,8 +183,6 @@ class Account(QObject):
     current_session_updated = pyqtSignal(Session)
     sessions_updated = pyqtSignal(list)
 
-    self.network_manager = QNetworkConfigurationManager(self)
-
     def __init__(self, username):
         super().__init__()
         self.username = username
@@ -196,6 +194,8 @@ class Account(QObject):
 
         self.balance = None
         self.byte = None
+
+        self.network_manager = QNetworkConfigurationManager(self)
 
     def __str__(self):
         return ('Tsinghua account {}: {}\n'
