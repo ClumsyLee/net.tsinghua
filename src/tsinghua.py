@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from requests import get, post, Session as _Session, RequestException
 from keyring import set_password, get_password, delete_password
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtNetwork import QNetworkConfigurationManager
 
 def _head_int(s):
     return int(match(r'\d+', s).group())
@@ -164,7 +165,12 @@ class Usereg(object):
 
 
 class Account(QObject):
-    """Tsinghua account"""
+    """Tsinghua account.
+    Statuses:
+        OFFLINE
+        ONLINE
+        ERROR
+        NO_CONNECTION (No POST/GET attemps will be made)"""
     SERVICE_NAME = 'net.tsinghua'
 
     BASE_URL = 'https://net.tsinghua.edu.cn'
@@ -176,11 +182,13 @@ class Account(QObject):
     current_session_updated = pyqtSignal(Session)
     sessions_updated = pyqtSignal(list)
 
+    self.network_manager = QNetworkConfigurationManager(self)
+
     def __init__(self, username):
         super().__init__()
         self.username = username
 
-        self._status = None
+        self._status = 'NO_CONNECTION'
 
         self.last_session = None
         self.sessions = []
@@ -243,7 +251,14 @@ class Account(QObject):
             real += session.byte
         return real
 
+    def setup(self):
+        self.network_manager.onlineStateChanged.connect(online_state_changed)
+        online_state_changed(self.network_manager.isOnline())  # First shot.
+
     def update_status(self):
+        if self.status == 'NO_CONNECTION':
+            return
+
         try:
             r = get(self.STATUS_PAGE)
             r.raise_for_status
@@ -282,6 +297,9 @@ class Account(QObject):
             self.status = 'ERROR'
 
     def update_infos(self):
+        if self.status == 'NO_CONNECTION':
+            return
+
         try:
             usereg = Usereg(self.username)
             sessions = usereg.sessions()
@@ -297,8 +315,17 @@ class Account(QObject):
         except (ConnectionError, ValueError) as e:
             logging.error('Failed to update account info: %s', e)
 
+    def online_state_changed(self, new_state):
+        if not new_state:                     # Go offline.
+            self.status = 'NO_CONNECTION'
+        elif self.status == 'NO_CONNECTION':  # Go online.
+            self.update_status()
+
     def login(self):
-        if self.status == 'OFFLINE' and self.username:
+        if self.status == 'NO_CONNECTION':
+            return
+
+        if self.username:
             try:
                 payload = dict(action='login',
                                username=self.username,
@@ -313,6 +340,9 @@ class Account(QObject):
                 logging.error('Failed to login: %s', e)
 
     def logout(self):
+        if self.status == 'NO_CONNECTION':
+            return
+
         if self.last_session is not None:
             try:
                 self.last_session.logout()
