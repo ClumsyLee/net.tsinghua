@@ -112,13 +112,13 @@ class NetDotTsinghuaApplication(QApplication):
         # Sessions section.
         self.sessions = []
         self.session_actions = []
-        self.last_check = None
 
         self.tray_menu.addSeparator()
         self.sessions_title_action = self.add_unabled_action()
         self.last_check_action = self.add_unabled_action()
         self.refresh_sessions([])
 
+        self.last_check = None
         self.tray_menu.aboutToShow.connect(self.update_time)
 
         # Config section.
@@ -161,6 +161,8 @@ class NetDotTsinghuaApplication(QApplication):
         return super().exec()
 
     def status_changed(self, status):
+        logging.debug('Refreshing status in the menu')
+
         self.status_action.setText(STATUS_STR[status])
 
         if status == 'ONLINE':
@@ -171,6 +173,7 @@ class NetDotTsinghuaApplication(QApplication):
             self.tray.showMessage('当前离线', '可以登录校园网')
 
     def refresh_username(self, username):
+        logging.debug('Refreshing username in the menu')
         if username is None:
             self.username_action.setText('未设置用户')
             self.usage_action.setVisible(False)
@@ -181,6 +184,8 @@ class NetDotTsinghuaApplication(QApplication):
             self.balance_action.setVisible(True)
 
     def refresh_account_info(self, balance, byte):
+        logging.debug('Refreshing account info section in the menu')
+
         self.usage_action.setText('本月流量：{}'.format(_usage_str(byte)))
         self.balance_action.setText('当前余额：{}'.format(_balance_str(balance)))
 
