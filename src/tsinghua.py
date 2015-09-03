@@ -254,7 +254,10 @@ class Account(QObject):
 
     def setup(self):
         self.network_manager.onlineStateChanged.connect(online_state_changed)
-        online_state_changed(self.network_manager.isOnline())  # First shot.
+        # First shot.
+        if self.network_manager.isOnline():
+            self.update_status()
+            self.update_infos()
 
     def update_status(self):
         if self.status == 'NO_CONNECTION':
