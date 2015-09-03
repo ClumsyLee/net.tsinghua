@@ -216,6 +216,7 @@ class Account(QObject):
     @status.setter
     def status(self, new_status):
         if self._status != new_status:
+            logging.info('Status: %s => %s', self._status, new_status)
             self._status = new_status
             self.status_changed.emit(self._status)
 
