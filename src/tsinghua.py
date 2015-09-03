@@ -254,9 +254,12 @@ class Account(object):
                     ip=ip,
                     start_time=start_time,
                     byte=byte)
-                self.byte = total_byte
-                self.balance = balance
                 self.status = 'ONLINE'
+
+                # If self online, update account infos.
+                if username == self.username:
+                    self.byte = total_byte
+                    self.balance = balance
 
         except (RequestException, ValueError) as e:
             logging.error('Failed to update status: %s', e)
