@@ -169,6 +169,7 @@ class Account(QObject):
     Statuses:
         OFFLINE
         ONLINE
+        OTHERS_ACCOUNT_ONLINE
         ERROR
         NO_CONNECTION (No POST/GET attemps will be made)"""
     SERVICE_NAME = 'net.tsinghua'
@@ -284,13 +285,14 @@ class Account(QObject):
                     start_time=start_time,
                     byte=byte)
                 self.current_session_updated.emit(deepcopy(self.last_session))
-                self.status = 'ONLINE'
 
-                # If self online, update account infos.
                 if username == self.username:
-                    self.balance = balance
+                    self.status = 'ONLINE'
+                    self.balance = balance  # Self online, update account infos.
                     self.byte = total_byte
                     self.info_updated.emit(self.balance, self.byte)
+                else:
+                    self.status = 'OTHERS_ACCOUNT_ONLINE'
 
         except (RequestException, ValueError) as e:
             logging.error('Failed to update status: %s', e)
