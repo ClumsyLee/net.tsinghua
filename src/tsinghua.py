@@ -188,8 +188,8 @@ class Account(QObject):
     current_session_updated = pyqtSignal(Session)
     sessions_updated = pyqtSignal(list)
 
-    def __init__(self, username):
-        super().__init__()
+    def __init__(self, username, parent=None):
+        super().__init__(parent)
         self.username = username
 
         self._status = 'UNKNOWN'

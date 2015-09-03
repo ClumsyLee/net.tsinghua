@@ -11,7 +11,7 @@ class Worker(QObject):
         super().__init__(parent)
 
         self.config = load_config()
-        self.account = Account(self.config['username'])
+        self.account = Account(self.config['username'], self)
 
         # Timers.
         self.status_timer = QTimer(self)
