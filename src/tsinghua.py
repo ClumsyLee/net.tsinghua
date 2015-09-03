@@ -10,6 +10,8 @@ from keyring import set_password, get_password, delete_password
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtNetwork import QNetworkConfigurationManager
 
+TIMEOUT = 10
+
 def _head_int(s):
     return int(match(r'\d+', s).group())
 
@@ -55,7 +57,8 @@ class Session(object):
 
     def logout(self):
         if self.session_id is None:
-            r = post(Account.LOGIN_PAGE, data={'action': 'logout'})
+            r = post(Account.LOGIN_PAGE, data={'action': 'logout'},
+                     timeout=TIMEOUT)
             if r.text != 'Logout is successful.':
                 raise ConnectionError('Failed to logout current session: {}({})'
                                       .format(r, r.text))
@@ -87,7 +90,7 @@ class Usereg(object):
             payload = dict(action='login',
                            user_login_name=acc.username,
                            user_password=acc.md5_pass)
-            r = s.post(self.LOGIN_PAGE, payload, verify=False)
+            r = s.post(self.LOGIN_PAGE, payload, verify=False, timeout=TIMEOUT)
             r.raise_for_status()
 
             if r.text == 'ok':
@@ -101,7 +104,7 @@ class Usereg(object):
     def account_info(self):
         """Fetch infos from info page, return a dict containing infos"""
         try:
-            r = self._s.get(self.INFO_PAGE, verify=False)
+            r = self._s.get(self.INFO_PAGE, verify=False, timeout=TIMEOUT)
             r.raise_for_status()
             soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -119,7 +122,7 @@ class Usereg(object):
     def sessions(self):
         """Fetch sessions from sessions page, return a list of sessions"""
         try:
-            r = self._s.get(self.SESSIONS_PAGE, verify=False)
+            r = self._s.get(self.SESSIONS_PAGE, verify=False, timeout=TIMEOUT)
             r.raise_for_status()
 
             soup = BeautifulSoup(r.text, 'html.parser')
@@ -153,7 +156,8 @@ class Usereg(object):
         try:
             payload = dict(action='drop',
                            user_ip=session_id)
-            r = self._s.post(self.SESSIONS_PAGE, payload, verify=False)
+            r = self._s.post(self.SESSIONS_PAGE, payload, verify=False,
+                             timeout=TIMEOUT)
             r.raise_for_status()
 
             if r.text != 'ok':
@@ -269,7 +273,7 @@ class Account(QObject):
             return
 
         try:
-            r = get(self.STATUS_PAGE)
+            r = get(self.STATUS_PAGE, timeout=TIMEOUT)
             r.raise_for_status()
 
             if not r.text:
@@ -343,7 +347,7 @@ class Account(QObject):
                                username=self.username,
                                password='{MD5_HEX}'+self.md5_pass,
                                ac_id=1)
-                r = post(self.LOGIN_PAGE, payload)
+                r = post(self.LOGIN_PAGE, payload, timeout=TIMEOUT)
                 if r.text in ('Login is successful.',
                               'IP has been online, please logout.'):
                     self.update_status()
