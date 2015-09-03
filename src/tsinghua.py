@@ -167,6 +167,7 @@ class Usereg(object):
 class Account(QObject):
     """Tsinghua account.
     Statuses:
+        UNKNOWN
         OFFLINE
         ONLINE
         OTHERS_ACCOUNT_ONLINE
@@ -187,7 +188,7 @@ class Account(QObject):
         super().__init__()
         self.username = username
 
-        self._status = 'NO_CONNECTION'
+        self._status = 'UNKNOWN'
 
         self.last_session = None
         self.sessions = []
@@ -259,6 +260,8 @@ class Account(QObject):
         if self.network_manager.isOnline():
             self.update_status()
             self.update_infos()
+        else:
+            self.status = "NO_CONNECTION"
 
     def update_status(self):
         if self.status == 'NO_CONNECTION':
@@ -266,7 +269,7 @@ class Account(QObject):
 
         try:
             r = get(self.STATUS_PAGE)
-            r.raise_for_status
+            r.raise_for_status()
 
             if not r.text:
                 self.status = 'OFFLINE'
@@ -325,6 +328,8 @@ class Account(QObject):
         if not new_state:                     # Go offline.
             self.status = 'NO_CONNECTION'
         elif self.status == 'NO_CONNECTION':  # Go online.
+            # Set to UNKNOWN first, or update_status will fail.
+            self.status = 'UNKNOWN'
             self.update_status()
 
     def login(self):
