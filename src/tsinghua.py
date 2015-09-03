@@ -272,6 +272,7 @@ class Account(QObject):
         if self.status == 'NO_CONNECTION':
             return
 
+        logging.info('Updating status')
         try:
             r = get(self.STATUS_PAGE, timeout=TIMEOUT)
             r.raise_for_status()
@@ -314,6 +315,7 @@ class Account(QObject):
         if self.status == 'NO_CONNECTION':
             return
 
+        logging.info('Updating account infos')
         try:
             usereg = Usereg(self.username)
             sessions = usereg.sessions()
@@ -343,6 +345,8 @@ class Account(QObject):
 
         if self.username:
             try:
+                logging.info('Logging in using account %s', self.username)
+
                 payload = dict(action='login',
                                username=self.username,
                                password='{MD5_HEX}'+self.md5_pass,
