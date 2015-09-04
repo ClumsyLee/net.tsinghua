@@ -56,6 +56,8 @@ class Session(object):
                                                         self.device_name)
 
     def logout(self):
+        logging.info('Logging out %s', self)
+
         if self.session_id is None:
             r = post(Account.LOGIN_PAGE, data={'action': 'logout'},
                      timeout=TIMEOUT)
@@ -154,13 +156,13 @@ class Usereg(object):
 
     def logout_session(self, session_id):
         try:
-            payload = dict(action='drop',
-                           user_ip=session_id)
+            payload = dict(action='drops',
+                           user_ip=(session_id + ','))
             r = self._s.post(self.SESSIONS_PAGE, payload, verify=False,
                              timeout=TIMEOUT)
             r.raise_for_status()
 
-            if r.text != 'ok':
+            if r.text != '下线请求已发送':
                 raise ConnectionError(r.text)
 
         except (RequestException, ConnectionError) as e:
