@@ -42,9 +42,9 @@ def _usage_str(byte):
     elif byte < int(10e6):
         return '{:.2f}K'.format(byte / 10e3)
     elif byte < int(10e9):
-        return '{:.2fM}'.format(byte / 10e6)
+        return '{:.2f}M'.format(byte / 10e6)
     else:
-        return '{:.2fG}'.format(byte / 10e9)
+        return '{:.2f}G'.format(byte / 10e9)
 
 def _balance_str(balance):
     if balance is None:
@@ -127,7 +127,7 @@ class NetDotTsinghuaApplication(QApplication):
         self.auto_manage_action.setCheckable(config['auto_manage'])
         self.auto_manage_action.toggled.connect(self.worker.auto_manage_changed)
 
-        self.account_setting_action = self.tray_menu.addAction('账户设置')
+        self.account_setting_action = self.tray_menu.addAction('账户设置...')
         self.account_setting_action.triggered.connect(self.account_setting)
 
         # Quit.
@@ -144,7 +144,6 @@ class NetDotTsinghuaApplication(QApplication):
 
         acc.status_changed.connect(self.status_changed)
         acc.info_updated.connect(self.refresh_account_info)
-        acc.current_session_updated.connect(self.status_changed)
         acc.sessions_updated.connect(self.refresh_sessions)
 
     start_worker = pyqtSignal()
