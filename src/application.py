@@ -60,19 +60,21 @@ class SessionMenu(QMenu):
         super().__init__()
         self.session = session
 
-        self.addAction(session.ip)
-        self.start_time = self.addAction('')
-        self.update_time()
-        self.addAction('下线').toggled.connect(self.logout)
+        self.addAction(session.ip).setEnabled(False)
 
+        self.start_time = self.addAction('')
+        self.start_time.setEnabled(False)
+        self.update_time()
         self.aboutToShow.connect(self.update_time)
+
+        self.addAction('下线').triggered.connect(self.logout)
 
     def logout(self):
         try:
             self.session.logout()
             self.logged_out.emit()
-        except ConnectionError:
-            pass
+        except ConnectionError as e:
+            logging.error('Failed to logout %s: %s', self.session, e)
 
     def update_time(self):
         self.start_time.setText(_time_passed_str(self.session.start_time) +
@@ -83,7 +85,10 @@ class NetDotTsinghuaApplication(QApplication):
     """NetDotTsinghuaApplication"""
     def __init__(self, argv):
         super().__init__(argv)
+        icon = QIcon(":/icon.png")
+
         self.setQuitOnLastWindowClosed(False)  # Run without windows.
+        self.setWindowIcon(icon)
         self.account_setting_dialog = None
 
         self.worker = Worker()
@@ -94,7 +99,7 @@ class NetDotTsinghuaApplication(QApplication):
         acc = self.worker.account
 
         # Set up tray menu.
-        self.tray = QSystemTrayIcon(QIcon(":/icon.png"), self)
+        self.tray = QSystemTrayIcon(icon, self)
         self.tray_menu = QMenu()
 
         # Status section.
@@ -111,14 +116,14 @@ class NetDotTsinghuaApplication(QApplication):
 
         # Sessions section.
         self.sessions = []
-        self.session_actions = []
+        self.session_menus = []
+        self.last_check = None
 
         self.tray_menu.addSeparator()
         self.sessions_title_action = self.add_unabled_action()
         self.last_check_action = self.add_unabled_action()
-        self.refresh_sessions([])
 
-        self.last_check = None
+        self.refresh_sessions([])
         self.tray_menu.aboutToShow.connect(self.update_time)
 
         # Config section.
@@ -201,20 +206,21 @@ class NetDotTsinghuaApplication(QApplication):
         else:
             self.sessions_title_action.setText('无设备在线')
 
-        new_actions = []
+        # Remove old actions
+        for menu in self.session_menus:
+            self.tray_menu.removeAction(menu.menuAction())
+        self.session_menus.clear()
+
+        # Add new actions.
         for session in sessions:
             menu = SessionMenu(session)
-            menu.setText(session.device_name)
-            # Update infos if logged out.
+            self.tray_menu.insertMenu(self.last_check_action,
+                                      menu).setText(session.device_name)
+            # Update status & infos if logged out.
+            menu.logged_out.connect(self.worker.account.update_status)
             menu.logged_out.connect(self.worker.account.update_infos)
-            new_actions.append(menu)
 
-        # Remove old actions & add new actions.
-        for action in self.session_actions:
-            self.tray_menu.removeAction(action)
-
-        self.tray_menu.insertActions(self.last_check_action, new_actions)
-        self.session_actions = new_actions
+            self.session_menus.append(menu)
 
     def update_time(self):
         self.last_check_action.setText(
