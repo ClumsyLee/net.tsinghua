@@ -63,7 +63,7 @@ class SessionMenu(QMenu):
         self.addAction(session.ip).setEnabled(False)
         self.start_time = self.addAction('')
         self.start_time.setEnabled(False)
-        self.addAction('≥ ' + _usage_str(session.byte)).setEnabled(False)
+        self.addAction('≥ ' + _usage_str_usage_str(session.byte)).setEnabled(False)
         self.addAction('下线').triggered.connect(self.logout)
 
         # Keep time valid.
