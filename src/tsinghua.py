@@ -70,7 +70,7 @@ class Session(object):
 
 class Usereg(object):
     """usereg.tsinghua.edu.cn"""
-    BASE_URL = 'https://usereg.tsinghua.edu.cn'
+    BASE_URL = 'http://usereg.tsinghua.edu.cn'
     LOGIN_PAGE = BASE_URL + '/do.php'
     INFO_PAGE = BASE_URL + '/user_info.php'
     SESSIONS_PAGE = BASE_URL + '/online_user_ipv4.php'
@@ -92,7 +92,7 @@ class Usereg(object):
             payload = dict(action='login',
                            user_login_name=acc.username,
                            user_password=acc.md5_pass)
-            r = s.post(self.LOGIN_PAGE, payload, verify=False, timeout=TIMEOUT)
+            r = s.post(self.LOGIN_PAGE, payload, timeout=TIMEOUT)
             r.raise_for_status()
 
             if r.text == 'ok':
@@ -106,7 +106,7 @@ class Usereg(object):
     def account_info(self):
         """Fetch infos from info page, return a dict containing infos"""
         try:
-            r = self._s.get(self.INFO_PAGE, verify=False, timeout=TIMEOUT)
+            r = self._s.get(self.INFO_PAGE, timeout=TIMEOUT)
             r.raise_for_status()
             soup = BeautifulSoup(r.text, 'html.parser')
 
@@ -124,7 +124,7 @@ class Usereg(object):
     def sessions(self):
         """Fetch sessions from sessions page, return a list of sessions"""
         try:
-            r = self._s.get(self.SESSIONS_PAGE, verify=False, timeout=TIMEOUT)
+            r = self._s.get(self.SESSIONS_PAGE, timeout=TIMEOUT)
             r.raise_for_status()
 
             soup = BeautifulSoup(r.text, 'html.parser')
@@ -158,7 +158,7 @@ class Usereg(object):
         try:
             payload = dict(action='drops',
                            user_ip=(session_id + ','))
-            r = self._s.post(self.SESSIONS_PAGE, payload, verify=False,
+            r = self._s.post(self.SESSIONS_PAGE, payload,
                              timeout=TIMEOUT)
             r.raise_for_status()
 
@@ -181,7 +181,7 @@ class Account(QObject):
         NO_CONNECTION (No POST/GET attemps will be made)"""
     SERVICE_NAME = 'net.tsinghua'
 
-    BASE_URL = 'https://net.tsinghua.edu.cn'
+    BASE_URL = 'http://net.tsinghua.edu.cn'
     STATUS_PAGE = BASE_URL + '/rad_user_info.php'
     LOGIN_PAGE = BASE_URL + '/do_login.php'
 
@@ -267,10 +267,11 @@ class Account(QObject):
         self.network_manager.onlineStateChanged.connect(
             self.online_state_changed)
         # First shot.
-        if self.network_manager.isOnline():
-            self.update_status()
-        else:
-            self.status = "NO_CONNECTION"
+        # if self.network_manager.isOnline():
+        #     self.update_status()
+        # else:
+        #     self.status = "NO_CONNECTION"
+        self.update_status()
 
     @pyqtSlot()
     def update_status(self):
