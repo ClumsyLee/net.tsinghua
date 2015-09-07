@@ -57,5 +57,4 @@ class Worker(QObject):
         self.account.username = username
         self.account.balance = self.account.byte = None
 
-        self.account.update_status()
-        self.account.update_infos()
+        self.account.update_all()

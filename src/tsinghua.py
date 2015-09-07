@@ -272,6 +272,7 @@ class Account(QObject):
         else:
             self.status = "NO_CONNECTION"
 
+    @pyqtSlot()
     def update_status(self):
         if self.status == 'NO_CONNECTION':
             return
@@ -315,6 +316,7 @@ class Account(QObject):
             logging.error('Failed to update status: %s', e)
             self.status = 'ERROR'
 
+    @pyqtSlot()
     def update_infos(self):
         if self.status == 'NO_CONNECTION':
             return
@@ -342,6 +344,14 @@ class Account(QObject):
         except (ConnectionError, ValueError) as e:
             logging.error('Failed to update account info: %s', e)
 
+    @pyqtSlot()
+    def update_all(self):
+        old_status = self.status
+        self.update_status()
+        if old_status == self.status:
+            self.update_infos()
+        # Else infos have been updated.
+
     def online_state_changed(self, new_state):
         if not new_state:                     # Go offline.
             self.status = 'NO_CONNECTION'
@@ -350,6 +360,7 @@ class Account(QObject):
             self.status = 'UNKNOWN'
             self.update_status()
 
+    @pyqtSlot()
     def login(self):
         if self.status == 'NO_CONNECTION':
             return
@@ -370,6 +381,7 @@ class Account(QObject):
             except RequestException as e:
                 logging.error('Failed to login: %s', e)
 
+    @pyqtSlot()
     def logout(self):
         if self.status == 'NO_CONNECTION':
             return
