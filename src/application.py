@@ -197,7 +197,7 @@ class NetDotTsinghuaApplication(QApplication):
     def refresh_username(self, username):
         logging.debug('Refreshing username in the menu')
         if username is None:
-            self.username_action.setText('未设置用户')
+            self.username_action.setText('未设置账号')
             self.usage_action.setVisible(False)
             self.balance_action.setVisible(False)
         else:
@@ -214,9 +214,9 @@ class NetDotTsinghuaApplication(QApplication):
     def status_changed(self, status):
         # Show tray message.
         if status == 'ONLINE':
-            self.tray.showMessage('当前在线', '本人账户在线')
+            self.tray.showMessage('当前在线', '本人账号在线')
         elif status == 'OTHERS_ACCOUNT_ONLINE':
-            self.tray.showMessage('当前在线', '他人账户在线')
+            self.tray.showMessage('当前在线', '他人账号在线')
         elif status == 'OFFLINE':
             self.tray.showMessage('当前离线', '可以登录校园网')
 

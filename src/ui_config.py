@@ -47,7 +47,7 @@ class Ui_AccountSettingDialog(object):
 
     def retranslateUi(self, AccountSettingDialog):
         _translate = QtCore.QCoreApplication.translate
-        AccountSettingDialog.setWindowTitle(_translate("AccountSettingDialog", "账户设置"))
+        AccountSettingDialog.setWindowTitle(_translate("AccountSettingDialog", "账号设置"))
         self.label.setText(_translate("AccountSettingDialog", "用户名"))
         self.label_2.setText(_translate("AccountSettingDialog", "密码"))
 
