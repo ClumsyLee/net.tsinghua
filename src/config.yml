@@ -1,5 +1,5 @@
 auto_manage: true
-auto_manage_interval_msec: 10000
-info_update_interval_msec: 20000
-status_update_interval_msec: 10000
-username: lisihan13
+auto_manage_interval_msec: 30000
+info_update_interval_msec: 300000
+status_update_interval_msec: 60000
+username:
