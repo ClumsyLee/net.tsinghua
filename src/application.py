@@ -298,22 +298,25 @@ class NetDotTsinghuaApplication(QApplication):
 
     @pyqtSlot()
     def show_about(self):
-        msg = """<p>net.tsinghua {}<br>
+        msg = """<p><b>net.tsinghua {}</b><br>
 <small>Copyright Ⓒ 2015 Thomas Lee</small></p>
 
 <p><a href="https://github.com/ThomasLee969/net.tsinghua">Github 主页</a>
 </p>""".format(__VERSION__)
 
-        QMessageBox.about(None, 'net.tsinghua', msg)
+        QMessageBox.about(None, '关于 net.tsinghua', msg)
 
 if __name__ == '__main__':
-    import sys
+    try:
+        import sys
 
-    logging.basicConfig(
-        format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.DEBUG,
-        filename='debug.log')
+        logging.basicConfig(
+            format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S',
+            level=logging.DEBUG,
+            filename='debug.log')
 
-    app = NetDotTsinghuaApplication(sys.argv)
-    sys.exit(app.exec())
+        app = NetDotTsinghuaApplication(sys.argv)
+        sys.exit(app.exec())
+    except Exception as e:
+        logging.critical('Uncaught exception: %s', e)
