@@ -97,8 +97,10 @@ class NetDotTsinghuaApplication(QApplication):
         self.worker_thread = QThread()
         self.worker.moveToThread(self.worker_thread)
 
-        config = self.worker.config
-        acc = self.worker.account
+        # For convenience.
+        worker = self.worker
+        config = worker.config
+        acc = worker.account
 
         # Set up tray menu.
         self.tray = QSystemTrayIcon(icon, self)
@@ -106,7 +108,9 @@ class NetDotTsinghuaApplication(QApplication):
 
         # Status section.
         self.status_action = self.add_unabled_action()
-        self.status_changed(self.worker.account.status)
+        self.status_changed(worker.account.status)
+        self.status = acc.status
+        self.last_session = None
 
         # Account info section.
         self.tray_menu.addSeparator()
@@ -126,13 +130,19 @@ class NetDotTsinghuaApplication(QApplication):
         self.last_check_action = self.add_unabled_action()
 
         self.refresh_sessions([])
-        self.tray_menu.aboutToShow.connect(self.update_time)
+
+        # Actions.
+        self.tray_menu.addSeparator()
+        self.tray_menu.addAction('上线').triggered.connect(acc.login)
+        self.tray_menu.addAction('下线').triggered.connect(acc.logout)
+        self.tray_menu.addAction('现在刷新').triggered.connect(acc.update_all)
 
         # Config section.
         self.tray_menu.addSeparator()
         self.auto_manage_action = self.tray_menu.addAction('自动管理')
-        self.auto_manage_action.setCheckable(config['auto_manage'])
-        self.auto_manage_action.toggled.connect(self.worker.auto_manage_changed)
+        self.auto_manage_action.setCheckable(True)
+        self.auto_manage_action.setChecked(config['auto_manage'])
+        self.auto_manage_action.toggled.connect(worker.auto_manage_changed)
 
         self.account_setting_action = self.tray_menu.addAction('账户设置...')
         self.account_setting_action.triggered.connect(self.account_setting)
@@ -145,13 +155,18 @@ class NetDotTsinghuaApplication(QApplication):
         self.tray.show()
 
         # Connect signals.
-        self.start_worker.connect(self.worker.setup)
+        self.start_worker.connect(worker.setup)
         self.username_changed.connect(self.refresh_username)
-        self.username_changed.connect(self.worker.username_changed)
+        self.username_changed.connect(worker.username_changed)
 
         acc.status_changed.connect(self.status_changed)
         acc.info_updated.connect(self.refresh_account_info)
+        acc.last_session_updated.connect(self.last_session_changed)
         acc.sessions_updated.connect(self.refresh_sessions)
+
+        # About to show.
+        self.tray_menu.aboutToShow.connect(self.update_time)
+        self.tray_menu.aboutToShow.connect(self.refresh_status)
 
     start_worker = pyqtSignal()
     username_changed = pyqtSignal(str)
@@ -168,11 +183,17 @@ class NetDotTsinghuaApplication(QApplication):
         logging.debug('GUI thread enters event loop')
         return super().exec()
 
-    def status_changed(self, status):
+    def refresh_status(self):
         logging.debug('Refreshing status in the menu')
 
-        self.status_action.setText(STATUS_STR[status])
+        s = STATUS_STR[status]
+        # Show session usage if possible.
+        if self.last_session and status in ('ONLINE', 'OTHERS_ACCOUNT_ONLINE'):
+            s = s + ' - ' + _usage_str(self.last_session.byte)
 
+        self.status_action.setText(s)
+
+        # Show tray message.
         if status == 'ONLINE':
             self.tray.showMessage('当前在线', '本人账户在线')
         elif status == 'OTHERS_ACCOUNT_ONLINE':
@@ -197,6 +218,12 @@ class NetDotTsinghuaApplication(QApplication):
         self.usage_action.setText('本月流量：{}'.format(_usage_str(byte)))
         self.balance_action.setText('当前余额：{}'.format(_balance_str(balance)))
 
+    def status_changed(self, status):
+        self.status = status
+
+    def last_session_changed(self, session):
+        self.last_session = session
+
     def refresh_sessions(self, sessions):
         logging.debug('Refreshing sessions section in the menu')
 
@@ -219,8 +246,7 @@ class NetDotTsinghuaApplication(QApplication):
             self.tray_menu.insertMenu(self.last_check_action,
                                       menu).setText(session.device_name)
             # Update status & infos if logged out.
-            menu.logged_out.connect(self.worker.account.update_status)
-            menu.logged_out.connect(self.worker.account.update_infos)
+            menu.logged_out.connect(self.worker.account.update_all)
 
             self.session_menus.append(menu)
 
