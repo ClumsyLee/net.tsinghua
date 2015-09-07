@@ -2,18 +2,13 @@
 <ui version="4.0">
  <class>AccountSettingDialog</class>
  <widget class="QDialog" name="AccountSettingDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>223</width>
-    <height>118</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>账号设置</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">

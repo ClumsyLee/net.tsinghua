@@ -11,8 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AccountSettingDialog(object):
     def setupUi(self, AccountSettingDialog):
         AccountSettingDialog.setObjectName("AccountSettingDialog")
-        AccountSettingDialog.resize(223, 118)
         self.verticalLayout = QtWidgets.QVBoxLayout(AccountSettingDialog)
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
