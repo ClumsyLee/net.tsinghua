@@ -187,7 +187,7 @@ class Account(QObject):
 
     status_changed = pyqtSignal(str)
     info_updated = pyqtSignal(float, int)  # Balance, byte.
-    current_session_updated = pyqtSignal(Session)
+    last_session_updated = pyqtSignal(Session)
     sessions_updated = pyqtSignal(list)
 
     def __init__(self, username, parent=None):
@@ -302,7 +302,7 @@ class Account(QObject):
                     ip=ip,
                     start_time=start_time,
                     byte=byte)
-                self.current_session_updated.emit(deepcopy(self.last_session))
+                self.last_session_updated.emit(deepcopy(self.last_session))
 
                 if username == self.username:
                     self.balance = balance  # Self online, update account infos.
