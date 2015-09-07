@@ -53,7 +53,9 @@ class Worker(QObject):
     def username_changed(self, username):
         logging.info('Changing username from %s to %s', self.account.username,
                                                         username)
-        del self.account.password
+        if self.account.password is not None:
+            del self.account.password  # Delete old password, if exists.
+
         self.account.username = username
         self.account.balance = self.account.byte = None
 
