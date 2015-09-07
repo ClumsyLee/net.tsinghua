@@ -304,10 +304,10 @@ class Account(QObject):
                 self.current_session_updated.emit(deepcopy(self.last_session))
 
                 if username == self.username:
-                    self.status = 'ONLINE'
                     self.balance = balance  # Self online, update account infos.
                     self.byte = total_byte
                     self.info_updated.emit(self.balance, self.byte)
+                    self.status = 'ONLINE'
                 else:
                     self.status = 'OTHERS_ACCOUNT_ONLINE'
 
