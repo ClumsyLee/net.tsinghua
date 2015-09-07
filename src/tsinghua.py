@@ -227,6 +227,9 @@ class Account(QObject):
             self._status = new_status
             self.status_changed.emit(self._status)
 
+            if new_status not in ('NO_CONNECTION', 'UNKNOWN'):
+                self.update_infos()  # Update infos on status change.
+
     @property
     def password(self):
         return get_password(self.SERVICE_NAME, self.username)
@@ -266,7 +269,6 @@ class Account(QObject):
         # First shot.
         if self.network_manager.isOnline():
             self.update_status()
-            self.update_infos()
         else:
             self.status = "NO_CONNECTION"
 
