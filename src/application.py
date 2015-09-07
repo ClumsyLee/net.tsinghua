@@ -2,13 +2,15 @@ from datetime import datetime, timedelta
 import logging
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
-from PyQt5.QtWidgets import QApplication, QMenu, QSystemTrayIcon
+from PyQt5.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon
 from PyQt5.QtGui import QIcon
 
 from tsinghua import Account
 from worker import Worker
 from config import AccountSettingDialog
 import resource
+
+__VERSION__ = 'v0.1'
 
 STATUS_STR = {
 'UNKNOWN': '未知状态',
@@ -151,6 +153,10 @@ class NetDotTsinghuaApplication(QApplication):
         self.account_setting_action = self.tray_menu.addAction('账号设置...')
         self.account_setting_action.triggered.connect(self.account_setting)
 
+        # About.
+        self.tray_menu.addSeparator()
+        self.tray_menu.addAction('关于').triggered.connect(self.show_about)
+
         # Quit.
         self.tray_menu.addSeparator()
         self.tray_menu.addAction('退出').triggered.connect(self.quit)
@@ -289,6 +295,16 @@ class NetDotTsinghuaApplication(QApplication):
                 self.update_all.emit()
 
         self.account_setting_dialog = None
+
+    @pyqtSlot()
+    def show_about(self):
+        msg = """<p>net.tsinghua {}<br>
+<small>Copyright Ⓒ 2015 Thomas Lee</small></p>
+
+<p><a href="https://github.com/ThomasLee969/net.tsinghua">Github 主页</a>
+</p>""".format(__VERSION__)
+
+        QMessageBox.about(None, 'net.tsinghua', msg)
 
 if __name__ == '__main__':
     import sys
