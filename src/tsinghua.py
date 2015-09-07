@@ -325,6 +325,13 @@ class Account(QObject):
             sessions = usereg.sessions()
             infos = usereg.account_info()
 
+            # Mark current selection.
+            for session in sessions:
+                if (self.status == 'ONLINE' and
+                    session.ip == self.last_session.ip):
+                    session.device_name += '（本机）'
+                    break
+
             self.sessions = sessions
             self.sessions_updated.emit(deepcopy(self.sessions))
 
