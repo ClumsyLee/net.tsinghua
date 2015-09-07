@@ -61,14 +61,16 @@ class SessionMenu(QMenu):
         self.session = session
 
         self.addAction(session.ip).setEnabled(False)
-
         self.start_time = self.addAction('')
         self.start_time.setEnabled(False)
+        self.addAction('≥ ' + _balance_str(session.byte)).setEnabled(False)
+        self.addAction('下线').triggered.connect(self.logout)
+
+        # Keep time valid.
         self.update_time()
         self.aboutToShow.connect(self.update_time)
 
-        self.addAction('下线').triggered.connect(self.logout)
-
+    @pyqtSlot()
     def logout(self):
         try:
             self.session.logout()
