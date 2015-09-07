@@ -7,7 +7,7 @@ from re import match
 from bs4 import BeautifulSoup
 from requests import get, post, Session as _Session, RequestException
 from keyring import set_password, get_password, delete_password
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QObject
 from PyQt5.QtNetwork import QNetworkConfigurationManager
 
 TIMEOUT = 10

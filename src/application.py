@@ -63,7 +63,7 @@ class SessionMenu(QMenu):
         self.addAction(session.ip).setEnabled(False)
         self.start_time = self.addAction('')
         self.start_time.setEnabled(False)
-        self.addAction('≥ ' + _balance_str(session.byte)).setEnabled(False)
+        self.addAction('≥ ' + _usage_str(session.byte)).setEnabled(False)
         self.addAction('下线').triggered.connect(self.logout)
 
         # Keep time valid.
@@ -186,20 +186,13 @@ class NetDotTsinghuaApplication(QApplication):
     def refresh_status(self):
         logging.debug('Refreshing status in the menu')
 
-        s = STATUS_STR[status]
+        s = STATUS_STR[self.status]
         # Show session usage if possible.
-        if self.last_session and status in ('ONLINE', 'OTHERS_ACCOUNT_ONLINE'):
+        if self.last_session and self.status in ('ONLINE',
+                                                 'OTHERS_ACCOUNT_ONLINE'):
             s = s + ' - ' + _usage_str(self.last_session.byte)
 
         self.status_action.setText(s)
-
-        # Show tray message.
-        if status == 'ONLINE':
-            self.tray.showMessage('当前在线', '本人账户在线')
-        elif status == 'OTHERS_ACCOUNT_ONLINE':
-            self.tray.showMessage('当前在线', '他人账户在线')
-        elif status == 'OFFLINE':
-            self.tray.showMessage('当前离线', '可以登录校园网')
 
     def refresh_username(self, username):
         logging.debug('Refreshing username in the menu')
@@ -219,6 +212,14 @@ class NetDotTsinghuaApplication(QApplication):
         self.balance_action.setText('当前余额：{}'.format(_balance_str(balance)))
 
     def status_changed(self, status):
+        # Show tray message.
+        if status == 'ONLINE':
+            self.tray.showMessage('当前在线', '本人账户在线')
+        elif status == 'OTHERS_ACCOUNT_ONLINE':
+            self.tray.showMessage('当前在线', '他人账户在线')
+        elif status == 'OFFLINE':
+            self.tray.showMessage('当前离线', '可以登录校园网')
+
         self.status = status
 
     def last_session_changed(self, session):
