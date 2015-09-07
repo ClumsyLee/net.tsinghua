@@ -144,7 +144,7 @@ class NetDotTsinghuaApplication(QApplication):
         self.auto_manage_action.setChecked(config['auto_manage'])
         self.auto_manage_action.toggled.connect(worker.auto_manage_changed)
 
-        self.account_setting_action = self.tray_menu.addAction('账户设置...')
+        self.account_setting_action = self.tray_menu.addAction('账号设置...')
         self.account_setting_action.triggered.connect(self.account_setting)
 
         # Quit.
