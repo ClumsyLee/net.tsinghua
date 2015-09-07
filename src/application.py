@@ -7,7 +7,7 @@ from PyQt5.QtGui import QIcon
 
 from tsinghua import Account
 from worker import Worker
-from config import load_config, save_config, AccountSettingDialog
+from config import AccountSettingDialog
 import resource
 
 STATUS_STR = {

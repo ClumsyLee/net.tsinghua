@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtCore import QObject, QTimer
 
 from tsinghua import Account
-from config import load_config
+from config import load_config, update_config
 
 class Worker(QObject):
     """Worker"""
@@ -49,10 +49,14 @@ class Worker(QObject):
     def auto_manage_changed(self, enable):
         logging.info('Turning auto_manage %s', 'on' if enable else 'off')
         self.config['auto_manage'] = enable
+        update_config(auto_manage=enable)  # Update config.
 
     def username_changed(self, username):
         logging.info('Changing username from %s to %s', self.account.username,
                                                         username)
+
+        update_config(username=username)  # Update config.
+
         if self.account.password is not None:
             del self.account.password  # Delete old password, if exists.
 
