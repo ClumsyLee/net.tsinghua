@@ -85,6 +85,10 @@ class SessionMenu(QMenu):
 
 class NetDotTsinghuaApplication(QApplication):
     """NetDotTsinghuaApplication"""
+    start_worker = pyqtSignal()
+    username_changed = pyqtSignal(str)
+    update_all = pyqtSignal()
+
     def __init__(self, argv):
         super().__init__(argv)
         icon = QIcon(":/icon.png")
@@ -158,6 +162,7 @@ class NetDotTsinghuaApplication(QApplication):
         self.start_worker.connect(worker.setup)
         self.username_changed.connect(self.refresh_username)
         self.username_changed.connect(worker.username_changed)
+        self.update_all.connect(acc.update_all)
 
         acc.status_changed.connect(self.status_changed)
         acc.info_updated.connect(self.refresh_account_info)
@@ -167,9 +172,6 @@ class NetDotTsinghuaApplication(QApplication):
         # About to show.
         self.tray_menu.aboutToShow.connect(self.update_time)
         self.tray_menu.aboutToShow.connect(self.refresh_status)
-
-    start_worker = pyqtSignal()
-    username_changed = pyqtSignal(str)
 
     def add_unabled_action(self, text=''):
         action = self.tray_menu.addAction(text)
@@ -278,10 +280,13 @@ class NetDotTsinghuaApplication(QApplication):
                 acc = Account(username)
                 acc.password = dialog.password.text()
 
-            # If username changed, emit signal and clear current account info.
             if username != self.worker.account.username:
+                # If username changed, emit signal and clear current account info.
                 self.username_changed.emit(username)
                 self.refresh_account_info(None, None)
+            else:
+                # Update all because password might has changed.
+                self.update_all.emit()
 
         self.account_setting_dialog = None
 
