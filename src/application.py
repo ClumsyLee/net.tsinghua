@@ -291,7 +291,8 @@ if __name__ == '__main__':
     logging.basicConfig(
         format='%(asctime)s.%(msecs)03d %(levelname)s:%(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
-        level=logging.DEBUG)
-    app = NetDotTsinghuaApplication(sys.argv)
+        level=logging.DEBUG,
+        filename='debug.log')
 
+    app = NetDotTsinghuaApplication(sys.argv)
     sys.exit(app.exec())
