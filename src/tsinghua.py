@@ -186,7 +186,7 @@ class Account(QObject):
     LOGIN_PAGE = BASE_URL + '/do_login.php'
 
     status_changed = pyqtSignal(str)
-    info_updated = pyqtSignal(float, int)  # Balance, byte.
+    info_updated = pyqtSignal(float, 'qint64')  # Balance, byte.
     last_session_updated = pyqtSignal(Session)
     sessions_updated = pyqtSignal(list)
 
