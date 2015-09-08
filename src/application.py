@@ -204,7 +204,7 @@ class NetDotTsinghuaApplication(QApplication):
 
     def refresh_username(self, username):
         logging.debug('Refreshing username in the menu')
-        if username is None:
+        if not username:
             self.username_action.setText('未设置账号')
             self.usage_action.setVisible(False)
             self.balance_action.setVisible(False)
