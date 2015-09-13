@@ -39,14 +39,14 @@ def _time_passed_str(t):
 def _usage_str(byte):
     if byte is None:
         return '未知'
-    elif byte < int(10e3):
+    elif byte < int(1e3):
         return '{}B'.format(byte)
-    elif byte < int(10e6):
-        return '{:.2f}K'.format(byte / 10e3)
-    elif byte < int(10e9):
-        return '{:.2f}M'.format(byte / 10e6)
+    elif byte < int(1e6):
+        return '{:.2f}K'.format(byte / 1e3)
+    elif byte < int(1e9):
+        return '{:.2f}M'.format(byte / 1e6)
     else:
-        return '{:.2f}G'.format(byte / 10e9)
+        return '{:.2f}G'.format(byte / 1e9)
 
 def _balance_str(balance):
     if balance is None:

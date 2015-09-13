@@ -24,11 +24,11 @@ def _usage_to_byte(usage):
     if unit == 'B':
         ratio = 1
     elif unit == 'K':
-        ratio = 1000
+        ratio = int(1e3)
     elif unit == 'M':
-        ratio = 1000000
+        ratio = int(1e6)
     elif unit == 'G':
-        ratio = 1000000000
+        ratio = int(1e9)
     else:
         raise ValueError('Unknown unit: ' + unit)
 
