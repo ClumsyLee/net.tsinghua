@@ -2,7 +2,9 @@ from copy import deepcopy
 from datetime import datetime
 from hashlib import md5
 import logging
+from platform import win32_ver
 from re import match
+import sys
 
 from bs4 import BeautifulSoup
 from requests import get, post, Session as _Session, RequestException
@@ -11,6 +13,17 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, QObject
 from PyQt5.QtNetwork import QNetworkConfigurationManager
 
 TIMEOUT = 10
+
+if sys.platform == 'darwin':
+    sys_str = 'Mac OS'
+elif sys.platform == 'win32':
+    sys_str = 'Windows NT ' + win32_ver()[1]
+elif sys.platform.startswith('linux'):
+    sys_str = 'Linux'
+else:
+    sys_str = 'Unknown'
+
+USER_AGENT = 'Mozilla/5.0 (' + sys_str +')'
 
 def _head_int(s):
     return int(match(r'\d+', s).group())
@@ -374,7 +387,8 @@ class Account(QObject):
                                username=self.username,
                                password='{MD5_HEX}'+self.md5_pass,
                                ac_id=1)
-                r = post(self.LOGIN_PAGE, payload, timeout=TIMEOUT)
+                r = post(self.LOGIN_PAGE, payload, timeout=TIMEOUT,
+                         headers={'user-agent': USER_AGENT})
                 if r.text in ('Login is successful.',
                               'IP has been online, please logout.'):
                     self.update_status()
