@@ -10,7 +10,7 @@ from worker import Worker
 from config import AccountSettingDialog
 import resource
 
-__VERSION__ = 'v0.1.1'
+__VERSION__ = 'v0.1.2'
 
 STATUS_STR = {
 'UNKNOWN': '未知状态',
