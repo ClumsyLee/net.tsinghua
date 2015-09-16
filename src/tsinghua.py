@@ -407,3 +407,14 @@ class Account(QObject):
                 self.update_status()
             except ConnectionError as e:
                 logging.error('Failed to logout: %s', e)
+
+    @pyqtSlot(Session)
+    def logout_session(self, session):
+        if self.status == 'NO_CONNECTION':
+            return
+
+        try:
+            session.logout()
+            self.update_infos()
+        except ConnectionError as e:
+            logging.error('Failed to logout session %s: %s', session, e)

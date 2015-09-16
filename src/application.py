@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThread
 from PyQt5.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon
 from PyQt5.QtGui import QIcon
 
-from tsinghua import Account
+from tsinghua import Account, Session
 from worker import Worker
 from config import AccountSettingDialog
 import resource
@@ -56,9 +56,9 @@ def _balance_str(balance):
 
 class SessionMenu(QMenu):
     """Session menu"""
-    logged_out = pyqtSignal()
+    logout_session = pyqtSignal(Session)
 
-    def __init__(self, session):
+    def __init__(self, account, session):
         super().__init__()
         self.session = session
 
@@ -67,6 +67,7 @@ class SessionMenu(QMenu):
         self.start_time.setEnabled(False)
         self.addAction('≥ ' + _usage_str(session.byte)).setEnabled(False)
         self.addAction('下线').triggered.connect(self.logout)
+        self.logout_session.connect(account.logout_session)
 
         # Keep time valid.
         self.update_time()
@@ -74,11 +75,7 @@ class SessionMenu(QMenu):
 
     @pyqtSlot()
     def logout(self):
-        try:
-            self.session.logout()
-            self.logged_out.emit()
-        except ConnectionError as e:
-            logging.error('Failed to logout %s: %s', self.session, e)
+        self.logout_session.emit(self.session)
 
     def update_time(self):
         self.start_time.setText(_time_passed_str(self.session.start_time) +
@@ -251,12 +248,9 @@ class NetDotTsinghuaApplication(QApplication):
 
         # Add new actions.
         for session in sessions:
-            menu = SessionMenu(session)
+            menu = SessionMenu(self.worker.account, session)
             self.tray_menu.insertMenu(self.last_check_action,
                                       menu).setText(session.device_name)
-            # Update status & infos if logged out.
-            menu.logged_out.connect(self.worker.account.update_all)
-
             self.session_menus.append(menu)
 
     def update_time(self):
