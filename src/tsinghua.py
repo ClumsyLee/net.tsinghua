@@ -153,7 +153,7 @@ class Usereg(object):
             while index < len(table):
                 sessions.append(Session(
                     username=self.username,
-                    session_id=table[index].select_one('input')['value'],
+                    session_id=table[index].input['value'],
                     ip=table[index + 1].text,
                     start_time=datetime.strptime(table[index + 2].text,
                                                  '%Y-%m-%d %H:%M:%S'),
