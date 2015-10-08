@@ -36,6 +36,10 @@ exports.status = {
 
 // Call callback(err).
 exports.login = function login(username, md5_pass, callback) {
+  if (typeof callback === 'undefined') {
+    callback = function (err) {};
+  }
+
   request.post({
       url: LOGIN_URL,
       form: {
@@ -62,6 +66,10 @@ exports.login = function login(username, md5_pass, callback) {
 
 // Call callback(err).
 exports.logout = function logout(callback) {
+  if (typeof callback === 'undefined') {
+    callback = function (err) {};
+  }
+
   request.post({
       url: LOGIN_URL,
       form: {

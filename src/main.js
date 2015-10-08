@@ -22,11 +22,8 @@ var template = [
   {label: '上次更新', enabled: false},
   {type: 'separator'},
   {label: '上线', click: function () {net.login('lisihan13',
-                                              '532da56d5f287fe343ca1eaa3234aa0c',
-                                              function () {
-                                                console.log('Logged in');
-                                              });}},
-  {label: '下线'},
+                                              '532da56d5f287fe343ca1eaa3234aa0c');}},
+  {label: '下线', click: function() {net.logout();}},
   {label: '现在刷新'},
   {type: 'separator'},
   {label: '自动管理', type: 'checkbox'},
