@@ -88,7 +88,32 @@ exports.logout = function logout(callback) {
   );
 }
 
+// Call callback(err, infos).
+exports.get_status = function get_status(callback) {
+  if (typeof callback === 'undefined') {
+    callback = function (err, infos) {};
+  }
 
-function get_status() {
-  // body...
+  request(STATUS_URL, function (err, r, body) {
+    if (err) {
+      console.error('Error while getting status: %s', err);
+      callback(err);
+    } else {
+      var infos;
+      if (body) {
+        var info_strs = body.split(',');
+        infos = {
+          username: info_strs[0],
+          start_time: new Date(Number(info_strs[1]) * 1000),
+          usage: Number(info_strs[3]),
+          total_usage: Number(info_strs[6]),
+          ip: info_strs[8],
+          balance: Number(info_strs[11])
+        };
+      } else {
+        infos = {};
+      }
+      callback(null, infos);
+    }
+  });
 }
