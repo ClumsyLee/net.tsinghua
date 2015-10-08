@@ -21,7 +21,11 @@ var template = [
   {label: 'IOS', submenu: submenu_template},
   {label: '上次更新', enabled: false},
   {type: 'separator'},
-  {label: '上线', click: net.login},
+  {label: '上线', click: function () {net.login('lisihan13',
+                                              '532da56d5f287fe343ca1eaa3234aa0c',
+                                              function () {
+                                                console.log('Logged in');
+                                              });}},
   {label: '下线'},
   {label: '现在刷新'},
   {type: 'separator'},
