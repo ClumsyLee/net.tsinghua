@@ -29,7 +29,7 @@ var template = [
   {type: 'separator'},
   {label: '关于'},
   {type: 'separator'},
-  {label: '退出'}
+  {label: '退出', click: function() {app.quit();}}
 ];
 
 var appIcon = null;
