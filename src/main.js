@@ -27,12 +27,14 @@ var STATUS_STR = {
 function get_menu_template() {
   var template = [];
 
+  // Status.
   var status_str = STATUS_STR[status];
   // Show session usage if possible.
   if ((status == 'ONLINE' || status == 'OTHERS_ACCOUNT_ONLINE') && last_session)
     status_str = status_str + '-' + utils.usage_str(last_session.usage);
   template.push({label: status_str, enabled: false});
 
+  // Account info.
   template.push({type: 'separator'});
   if (!config.username) {
     template.push({label: '未设置帐号', enabled: false});
@@ -43,6 +45,7 @@ function get_menu_template() {
                    enabled: false});
   }
 
+  // Sessions.
   template.push({type: 'separator'});
   if (!sessions) {
     template.push({label: '无设备在线', enabled: false});
@@ -62,6 +65,7 @@ function get_menu_template() {
                  enabled: false});
 
   return template.concat([
+    // Actions.
     {type: 'separator'},
     {label: '上线', click: function () {
       net.login(config.username, config.md5_pass);
@@ -69,13 +73,16 @@ function get_menu_template() {
     {label: '下线', click: function() {net.logout();}},
     {label: '现在刷新'},
 
+    // Config.
     {type: 'separator'},
     {label: '自动管理', type: 'checkbox', checked: config.auto_manage},
     {label: '账号设置...'},
 
+    // About.
     {type: 'separator'},
     {label: '关于 net.tsinghua', role: 'about'},
 
+    // Quit.
     {type: 'separator'},
     {label: '退出', click: function() {app.quit();}}
   ]);
