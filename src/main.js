@@ -1,6 +1,7 @@
 var app = require('app');
 var Menu = require('menu');
 var Tray = require('tray');
+var net = require('./net');
 
 var submenu_template = [
   {label: '59.66.1.1', enabled: false},
@@ -20,7 +21,7 @@ var template = [
   {label: 'IOS', submenu: submenu_template},
   {label: '上次更新', enabled: false},
   {type: 'separator'},
-  {label: '上线'},
+  {label: '上线', click: net.login},
   {label: '下线'},
   {label: '现在刷新'},
   {type: 'separator'},
