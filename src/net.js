@@ -34,7 +34,7 @@ exports.status = {
 //   });
 // }
 
-// Call callback if login successful.
+// Call callback(err).
 exports.login = function login(username, md5_pass, callback) {
   request.post({
       url: LOGIN_URL,
@@ -46,12 +46,35 @@ exports.login = function login(username, md5_pass, callback) {
       }
     },
     function (err, r, body) {
-      if (body == 'Login is successful.') {
-        callback();
-      } else if (err) {
+      if (err) {
         console.error('Error while logging in: %s', err);
+        callback(err);
+      } else if (body == 'Login is successful.') {
+        console.info('Logged in using %s', username);
+        callback(null);
       } else {
         console.error('Failed to login: %s', body);
+        callback(body);
+      }
+    }
+  );
+}
+
+// Call callback(err).
+exports.logout = function logout(callback) {
+  request.post({
+      url: LOGIN_URL,
+      form: {
+        action: 'logout'
+      }
+    },
+    function (err, r, body) {
+      if (err) {
+        console.error('Error while logging out: %s', err);
+        callback(err);
+      } else {
+        console.info('Logged out');
+        callback(null);
       }
     }
   );
