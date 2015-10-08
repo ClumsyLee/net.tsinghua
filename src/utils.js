@@ -1,4 +1,4 @@
-exports.usage_str = function usage_srt(usage) {
+exports.usage_str = function usage_str(usage) {
   if (usage == null)
     return '未知';
   else if (usage < 1e3)
