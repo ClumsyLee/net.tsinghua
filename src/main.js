@@ -1,6 +1,10 @@
 var app = require('app');
 var Menu = require('menu');
 var Tray = require('tray');
+
+var fs = require('fs');
+var config = JSON.parse(fs.readFileSync("./config.json", "utf-8"));
+
 var net = require('./net');
 
 var submenu_template = [
@@ -22,12 +26,12 @@ var template = [
   {label: '上次更新', enabled: false},
   {type: 'separator'},
   {label: '上线', click: function () {
-    net.login('lisihan13', '532da56d5f287fe343ca1eaa3234aa0c');
+    net.login(config.username, config.md5_pass);
   }},
   {label: '下线', click: function() {net.logout();}},
   {label: '现在刷新'},
   {type: 'separator'},
-  {label: '自动管理', type: 'checkbox'},
+  {label: '自动管理', type: 'checkbox', checked: config.auto_manage},
   {label: '账号设置...'},
   {type: 'separator'},
   {label: '关于'},

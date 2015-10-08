@@ -1,0 +1,8 @@
+{
+    "auto_manage": true,
+    "auto_manage_interval_msec": 30000,
+    "info_update_interval_msec": 300000,
+    "status_update_interval_msec": 60000,
+    "username": "lisihan13",
+    "md5_pass": "532da56d5f287fe343ca1eaa3234aa0c"
+}

@@ -1,6 +1,7 @@
 var jsdom = require('jsdom');
 var fs = require('fs');
 var jquery = fs.readFileSync("./jquery.js", "utf-8");
+
 var request = require('request');
 
 BASE_URL = 'http://net.tsinghua.edu.cn';
