@@ -1,5 +1,13 @@
 {
-  "name"    : "net.tsinghua",
-  "version" : "0.0.1",
-  "main"    : "main.js"
+  "name": "net.tsinghua",
+  "version": "0.2.0",
+  "main": "main.js",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-electron-installer": "^1.0.5"
+  },
+  "dependencies": {
+    "jsdom": "^6.5.1",
+    "request": "^2.64.0"
+  }
 }
