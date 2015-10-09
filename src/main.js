@@ -9,11 +9,11 @@ var net = require('./net');
 var utils = require('./utils')
 
 var status = 'UNKNOWN';
-var last_session = null;
-var last_check = null
+var last_session = {};
 var sessions = [];
+var last_check = null
+var total_usage = null;
 var balance = null;
-var usage = null;
 
 var STATUS_STR = {
   UNKNOWN: '未知状态',
@@ -22,6 +22,20 @@ var STATUS_STR = {
   OTHERS_ACCOUNT_ONLINE: '他人账号在线',
   ERROR: '网络错误',
   NO_CONNECTION: '无连接'
+}
+
+function login() {
+  net.login(config.username, config.md5_pass, function (err) {
+    if (!err)
+      update_status();
+  });
+}
+
+function logout() {
+  net.logout(function (err) {
+    if (!err)
+      update_status();
+  });
 }
 
 function get_menu_template() {
@@ -40,7 +54,8 @@ function get_menu_template() {
     template.push({label: '未设置帐号', enabled: false});
   } else {
     template.push({label: config.username, enabled: false});
-    template.push({label: '本月流量：' + utils.usage_str(usage), enabled: false});
+    template.push({label: '本月流量：' + utils.usage_str(total_usage),
+                   enabled: false});
     template.push({label: '当前余额：' + utils.balance_str(balance),
                    enabled: false});
   }
@@ -67,10 +82,8 @@ function get_menu_template() {
   return template.concat([
     // Actions.
     {type: 'separator'},
-    {label: '上线', click: function () {
-      net.login(config.username, config.md5_pass);
-    }},
-    {label: '下线', click: function() {net.logout();}},
+    {label: '上线', click: login},
+    {label: '下线', click: logout},
     {label: '现在刷新'},
 
     // Config.
@@ -89,11 +102,52 @@ function get_menu_template() {
 }
 
 var appIcon = null;
+
+function reset_menu() {
+  if (appIcon)
+    appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
+}
+
+function update_status() {
+  console.log('Updating status');
+
+  net.get_status(function (err, infos) {
+    if (err) {
+      status = 'ERROR';
+    } else {
+      if (!infos) {
+        status = 'OFFLINE';
+
+        // Try to login if needed.
+        if (config.auto_manage && config.username)
+          net.login(config.username, config.md5_pass);
+      } else {
+        if (config.username == infos.username)
+          status = 'ONLINE';
+        else
+          status = 'OTHERS_ACCOUNT_ONLINE';
+        // Got something useful, update infos.
+        last_session.ip = infos.ip;
+        last_session.start_time = infos.start_time;
+        last_session.usage = infos.usage;
+
+        total_usage = infos.total_usage;
+        balance = infos.balance;
+      }
+    }
+  });
+}
+
+setInterval(function () {
+  update_status();
+  // Try to login if needed.
+  if (status == 'OFFLINE' && config.auto_manage && config.username)
+    login();
+}, config.status_update_interval_msec);
+
 app.on('ready', function(){
   appIcon = new Tray('icon.png');
 
-  // template[0].label = 'hehe';
-  var contextMenu = Menu.buildFromTemplate(get_menu_template());
-  appIcon.setContextMenu(contextMenu);
+  reset_menu();
   appIcon.setToolTip('This is my application.');
 });
