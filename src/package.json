@@ -8,20 +8,21 @@
   },
   "dependencies": {
     "jsdom": "^6.5.1",
+    "md5": "^2.0.0",
     "request": "^2.64.0"
   },
   "bugs": {
-      "url": "https://github.com/ThomasLee969/net.tsinghua/issues"
+    "url": "https://github.com/ThomasLee969/net.tsinghua/issues"
   },
   "authors": [
-      {
-          "name": "Thomas Lee",
-          "email": "lisihan969@gmail.com"
-      }
+    {
+      "name": "Thomas Lee",
+      "email": "lisihan969@gmail.com"
+    }
   ],
   "repository": {
-      "type" : "git",
-      "url" : "https://github.com/ThomasLee969/net.tsinghua.git"
+    "type": "git",
+    "url": "https://github.com/ThomasLee969/net.tsinghua.git"
   },
   "license": "MIT"
 }
