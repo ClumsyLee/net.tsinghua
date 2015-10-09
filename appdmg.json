@@ -1,12 +1,12 @@
 {
   "title": "net.tsinghua",
 
-  "background": "src/background.jpg",
+  "background": "resource/background.jpg",
 
   "icon-size": 80,
 
   "contents": [
     { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
-    { "x": 192, "y": 344, "type": "file", "path": "src/net.tsinghua-darwin-x64/net.tsinghua.app" }
+    { "x": 192, "y": 344, "type": "file", "path": "build/net.tsinghua-darwin-x64/net.tsinghua.app" }
   ]
 }
