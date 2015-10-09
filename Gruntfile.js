@@ -23,7 +23,7 @@ module.exports = function(grunt) {
     },
     shell: {
       win32: {
-        command: 'electron-packager . <%= pkg.name %> --platform=win32 --arch=ia32 --out=build/ --version=0.33.6 --ignore=build/ --icon=resource/icon.ico --app-version=<%= pkg.version %>'
+        command: 'electron-packager . <%= pkg.name %> --platform=win32 --arch=ia32 --asar=true --out=build/ --version=0.33.6 --ignore=build/ --icon=resource/icon.ico --app-version=<%= pkg.version %>'
       },
       darwin: {
         command: 'electron-packager . <%= pkg.name %> --platform=darwin --arch=x64 --out=build/ --version=0.33.6 --ignore=build/ --icon=resource/icon.icns --app-version=<%= pkg.version %>'
