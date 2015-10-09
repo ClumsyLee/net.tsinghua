@@ -45,7 +45,7 @@ function get_menu_template() {
   var status_str = STATUS_STR[status];
   // Show session usage if possible.
   if ((status == 'ONLINE' || status == 'OTHERS_ACCOUNT_ONLINE') && last_session)
-    status_str = status_str + '-' + utils.usage_str(last_session.usage);
+    status_str = status_str + ' - ' + utils.usage_str(last_session.usage);
   template.push({label: status_str, enabled: false});
 
   // Account info.
@@ -93,7 +93,7 @@ function get_menu_template() {
 
     // About.
     {type: 'separator'},
-    {label: '关于 net.tsinghua', role: 'about'},
+    {label: '关于 ' + app.getName(), role: 'about'},
 
     // Quit.
     {type: 'separator'},
@@ -104,8 +104,10 @@ function get_menu_template() {
 var appIcon = null;
 
 function reset_menu() {
-  if (appIcon)
+  if (appIcon) {
+    console.log('Reseting menu');
     appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
+  }
 }
 
 function update_status() {
@@ -135,6 +137,7 @@ function update_status() {
         balance = infos.balance;
       }
     }
+    reset_menu();
   });
 }
 
