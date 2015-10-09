@@ -2,8 +2,13 @@ var app = require('app');
 var Menu = require('menu');
 var Tray = require('tray');
 var BrowserWindow = require('browser-window');
+
 var autoUpdater = require('auto-updater');
-autoUpdater.setFeedUrl('https://net-tsinghua.herokuapp.com/update/osx/' + app.getVersion());
+console.log('http://net-tsinghua.herokuapp.com/update/osx/' + app.getVersion());
+autoUpdater.on('error', function (event, message) {
+  console.log(message);
+})
+autoUpdater.setFeedUrl('http://net-tsinghua.herokuapp.com/update/darwin_x64/' + app.getVersion());
 
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
