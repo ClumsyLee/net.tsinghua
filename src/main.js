@@ -3,7 +3,7 @@ var Menu = require('menu');
 var Tray = require('tray');
 
 var fs = require('fs');
-var config = JSON.parse(fs.readFileSync("./config.json", "utf-8"));
+var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
 
 var net = require('./net');
 var utils = require('./utils')
@@ -149,7 +149,7 @@ setInterval(function () {
 }, config.status_update_interval_msec);
 
 app.on('ready', function(){
-  appIcon = new Tray('icon.png');
+  appIcon = new Tray(__dirname + '/icon.png');
 
   reset_menu();
   appIcon.setToolTip('This is my application.');

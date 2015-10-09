@@ -1,6 +1,6 @@
 var jsdom = require('jsdom');
 var fs = require('fs');
-var jquery = fs.readFileSync("./jquery.js", "utf-8");
+var jquery = fs.readFileSync(__dirname + "/jquery.js", "utf-8");
 
 var request = require('request');
 
