@@ -112,7 +112,7 @@ exports.get_status = function get_status(callback) {
           balance: Number(info_strs[11])
         };
       } else {
-        infos = {};
+        infos = null;
       }
       console.log('Got status: %s', JSON.stringify(infos));
       callback(null, infos);

@@ -126,15 +126,16 @@ function update_status() {
       } else {
         if (config.username == infos.username)
           status = 'ONLINE';
+
+          // These infos belong to current account, save it.
+          total_usage = infos.total_usage;
+          balance = infos.balance;
         else
           status = 'OTHERS_ACCOUNT_ONLINE';
         // Got something useful, update infos.
         last_session.ip = infos.ip;
         last_session.start_time = infos.start_time;
         last_session.usage = infos.usage;
-
-        total_usage = infos.total_usage;
-        balance = infos.balance;
       }
     }
     reset_menu();
