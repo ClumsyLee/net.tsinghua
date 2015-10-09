@@ -9,5 +9,19 @@
   "dependencies": {
     "jsdom": "^6.5.1",
     "request": "^2.64.0"
-  }
+  },
+  "bugs": {
+      "url": "https://github.com/ThomasLee969/net.tsinghua/issues"
+  },
+  "authors": [
+      {
+          "name": "Thomas Lee",
+          "email": "lisihan969@gmail.com"
+      }
+  ],
+  "repository": {
+      "type" : "git",
+      "url" : "https://github.com/ThomasLee969/net.tsinghua.git"
+  },
+  "license": "MIT"
 }
