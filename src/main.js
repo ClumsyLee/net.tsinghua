@@ -24,19 +24,7 @@ var STATUS_STR = {
   NO_CONNECTION: '无连接'
 }
 
-function login() {
-  net.login(config.username, config.md5_pass, function (err) {
-    if (!err)
-      update_status();
-  });
-}
-
-function logout() {
-  net.logout(function (err) {
-    if (!err)
-      update_status();
-  });
-}
+var appIcon = null;
 
 function get_menu_template() {
   var template = [];
@@ -84,7 +72,7 @@ function get_menu_template() {
     {type: 'separator'},
     {label: '上线', click: login},
     {label: '下线', click: logout},
-    {label: '现在刷新'},
+    {label: '现在刷新', click: update_status},
 
     // Config.
     {type: 'separator'},
@@ -101,7 +89,19 @@ function get_menu_template() {
   ]);
 }
 
-var appIcon = null;
+function login() {
+  net.login(config.username, config.md5_pass, function (err) {
+    if (!err)
+      update_status();
+  });
+}
+
+function logout() {
+  net.logout(function (err) {
+    if (!err)
+      update_status();
+  });
+}
 
 function reset_menu() {
   if (appIcon) {
