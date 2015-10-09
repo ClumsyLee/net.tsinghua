@@ -124,14 +124,15 @@ function update_status() {
         if (config.auto_manage && config.username)
           net.login(config.username, config.md5_pass);
       } else {
-        if (config.username == infos.username)
+        if (config.username == infos.username) {
           status = 'ONLINE';
 
           // These infos belong to current account, save it.
           total_usage = infos.total_usage;
           balance = infos.balance;
-        else
+        } else {
           status = 'OTHERS_ACCOUNT_ONLINE';
+        }
         // Got something useful, update infos.
         last_session.ip = infos.ip;
         last_session.start_time = infos.start_time;
