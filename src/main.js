@@ -4,10 +4,21 @@ var Tray = require('tray');
 var BrowserWindow = require('browser-window');
 
 var autoUpdater = require('auto-updater');
-console.log('http://net-tsinghua.herokuapp.com/update/osx/' + app.getVersion());
 autoUpdater.on('error', function (event, message) {
   console.log(message);
-})
+});
+autoUpdater.on('checking-for-update', function () {
+  console.log('Checking for update');
+});
+autoUpdater.on('update-available', function () {
+  console.log('Update available');
+});
+autoUpdater.on('update-not-available', function () {
+  console.log('Update not available');
+});
+autoUpdater.on('update-downloaded', function () {
+  console.log('Update downloaded');
+});
 autoUpdater.setFeedUrl('http://net-tsinghua.herokuapp.com/update/darwin_x64/' + app.getVersion());
 
 var fs = require('fs');
@@ -166,6 +177,7 @@ app.on('ready', function() {
   appIcon.setToolTip('This is my application.');
 
   update_status();  // First shot.
+  autoUpdater.checkForUpdates();  // Check for updates.
 });
 
 app.on('window-all-closed', function() {});
