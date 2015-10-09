@@ -62,7 +62,7 @@ function get_menu_template() {
 
   // Sessions.
   template.push({type: 'separator'});
-  if (!sessions) {
+  if (sessions.length == 0) {
     template.push({label: '无设备在线', enabled: false});
   } else {
     template.push({label: '当前在线', enabled: false});
@@ -155,4 +155,6 @@ app.on('ready', function(){
 
   reset_menu();
   appIcon.setToolTip('This is my application.');
+
+  update_status();  // First shot.
 });
