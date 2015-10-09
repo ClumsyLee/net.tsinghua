@@ -152,8 +152,8 @@ setInterval(function () {
     login();
 }, config.status_update_interval_msec);
 
-app.on('ready', function(){
-  appIcon = new Tray(__dirname + '/icon.png');
+app.on('ready', function() {
+  appIcon = new Tray(__dirname + '/tray_icon.png');
 
   reset_menu();
   appIcon.setToolTip('This is my application.');

@@ -1,7 +1,10 @@
 {
   "name": "net.tsinghua",
   "version": "0.2.0",
+  "description": "A cross-platform auto-login utility for Tsinghua students",
   "main": "src/main.js",
+  "homepage": "https://github.com/ThomasLee969/net.tsinghua",
+  "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^1.0.5"
@@ -12,7 +15,8 @@
     "request": "^2.64.0"
   },
   "bugs": {
-    "url": "https://github.com/ThomasLee969/net.tsinghua/issues"
+    "url": "https://github.com/ThomasLee969/net.tsinghua/issues",
+    "email": "lisihan969@gmail.com"
   },
   "authors": [
     {
@@ -24,5 +28,7 @@
     "type": "git",
     "url": "https://github.com/ThomasLee969/net.tsinghua.git"
   },
-  "license": "MIT"
+  "scripts": {
+    "publish": "electron-packager src/ --all --out=build/ --version=0.33.6 --icon=resource/icon.png --app-version=0.2.0"
+  }
 }
