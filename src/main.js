@@ -119,10 +119,6 @@ function update_status() {
     } else {
       if (!infos) {
         status = 'OFFLINE';
-
-        // Try to login if needed.
-        if (config.auto_manage && config.username)
-          net.login(config.username, config.md5_pass);
       } else {
         if (config.username == infos.username) {
           status = 'ONLINE';
