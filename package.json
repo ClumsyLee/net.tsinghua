@@ -6,8 +6,11 @@
   "homepage": "https://github.com/ThomasLee969/net.tsinghua",
   "license": "MIT",
   "devDependencies": {
+    "electron-prebuilt": "^0.33.6",
     "grunt": "^0.4.5",
-    "grunt-electron-installer": "^1.0.5"
+    "grunt-electron-installer": "^1.0.5",
+    "grunt-shell": "^1.1.2",
+    "load-grunt-tasks": "^3.3.0"
   },
   "dependencies": {
     "jsdom": "^6.5.1",
@@ -27,8 +30,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ThomasLee969/net.tsinghua.git"
-  },
-  "scripts": {
-    "publish": "electron-packager src/ --all --out=build/ --version=0.33.6 --icon=resource/icon.png --app-version=0.2.0"
   }
 }
