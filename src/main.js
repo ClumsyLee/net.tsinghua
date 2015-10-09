@@ -1,6 +1,7 @@
 var app = require('app');
 var Menu = require('menu');
 var Tray = require('tray');
+var BrowserWindow = require('browser-window');
 
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
@@ -77,7 +78,7 @@ function get_menu_template() {
     // Config.
     {type: 'separator'},
     {label: '自动管理', type: 'checkbox', checked: config.auto_manage},
-    {label: '账号设置...'},
+    {label: '账号设置...', click: account_setting},
 
     // About.
     {type: 'separator'},
@@ -139,6 +140,11 @@ function update_status() {
   });
 }
 
+function account_setting() {
+  var dialog = new BrowserWindow({width: 220, height: 120, resizable: false});
+  dialog.loadUrl('file://' + __dirname + '/account_setting.html');
+}
+
 setInterval(function () {
   update_status();
   // Try to login if needed.
@@ -154,3 +160,5 @@ app.on('ready', function(){
 
   update_status();  // First shot.
 });
+
+app.on('window-all-closed', function() {});

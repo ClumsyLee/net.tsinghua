@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>帐号设置</title>
+    <script>
+      var account_setting = require('./account_setting');
+      function function_name(argument) {
+        // body...
+      }
+    </script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td>
+          <label for="username">用户名</label>
+        </td>
+        <td>
+          <input type="text" name="username" id="username">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="password">密码</label>
+        </td>
+        <td>
+          <input type="password" name="password" id="password">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <center>
+            <input type="button" name="submit" value="确认" onclick="account_setting.save_account();window.close();">
+          </center>
+        </td>
+      </tr>
+    </table>
+  </body>
+  <script>
+    account_setting.get_username();
+  </script>
+</html>
