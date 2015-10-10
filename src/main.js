@@ -3,24 +3,70 @@ var Menu = require('menu');
 var Tray = require('tray');
 var BrowserWindow = require('browser-window');
 
-var autoUpdater = require('auto-updater');
-autoUpdater.on('error', function (event, message) {
-  console.log(message);
-});
-autoUpdater.on('checking-for-update', function () {
-  console.log('Checking for update');
-});
-autoUpdater.on('update-available', function () {
-  console.log('Update available');
-});
-autoUpdater.on('update-not-available', function () {
-  console.log('Update not available');
-});
-autoUpdater.on('update-downloaded', function () {
-  console.log('Update downloaded');
-});
-autoUpdater.setFeedUrl('http://net-tsinghua.herokuapp.com/update/darwin_x64/' + app.getVersion());
+var checkForUpdates = function () {};
 
+if (process.platform == 'darwin') {
+  // Auto updater for Darwin.
+  var autoUpdater = require('auto-updater');
+  autoUpdater.on('error', function (event, message) {
+    console.log(message);
+  });
+  autoUpdater.on('checking-for-update', function () {
+    console.log('Checking for update');
+  });
+  autoUpdater.on('update-available', function () {
+    console.log('Update available');
+  });
+  autoUpdater.on('update-not-available', function () {
+    console.log('Update not available');
+  });
+  autoUpdater.on('update-downloaded', function () {
+    console.log('Update downloaded');
+  });
+  autoUpdater.setFeedUrl('https://net-tsinghua.herokuapp.com/update/osx/' +
+                         app.getVersion());
+  checkForUpdates = function () {
+    autoUpdater.checkForUpdates();
+  }
+} else if (process.platform == 'win32') {
+  var squirrelCommand = process.argv[1];
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+      console.log('App installed.');
+      app.quit();
+      break;
+    case '--squirrel-updated':
+      console.log('App updated.');
+
+      // Optionally do things such as:
+      //
+      // - Install desktop and start menu shortcuts
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Always quit when done
+      app.quit();
+      break;
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Always quit when done
+      console.log('Uninstalling.');
+      app.quit();
+      break;
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      console.log('About to update to a newer version.');
+      app.quit();
+      break;
+  }
+}
+
+// Load config.
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
 
@@ -177,7 +223,7 @@ app.on('ready', function() {
   appIcon.setToolTip('This is my application.');
 
   update_status();  // First shot.
-  autoUpdater.checkForUpdates();  // Check for updates.
+  checkForUpdates();
 });
 
 app.on('window-all-closed', function() {});
