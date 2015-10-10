@@ -28,13 +28,13 @@ exports.get_infos = function get_infos(username, md5_pass, callback) {
       callback(err);
     } else {
       // Logged into usereg, fetch user page.
-      request(INFO_URL, function (err, r, info_page) {
+      request({url: INFO_URL, encoding: null}, function (err, r, info_page) {
         if (err) {
           console.error('Error while fetching user info from usereg: %s', err);
           callback(err);
         } else {
           // User page fetched, fetch sessions page.
-          request(SESSIONS_URL, function (err, r, sessions_page) {
+          request({url: SESSIONS_URL, encoding: null}, function (err, r, sessions_page) {
             if (err) {
               console.error('Error while fetching sessions from usereg: %s', err);
               callback(err);
@@ -85,8 +85,8 @@ function parse_pages(info_page, sessions_page, callback) {
     callback = function (err, infos) {};
   }
 
-  encoding.convert(info_page, 'UTF-8', 'GB2312').toString();
-  encoding.convert(sessions_page, 'UTF-8', 'GB2312').toString();
+  info_page = encoding.convert(info_page, 'UTF-8', 'GB2312').toString();
+  sessions_page = encoding.convert(sessions_page, 'UTF-8', 'GB2312').toString();
 
   var infos = {};
 
@@ -102,16 +102,15 @@ function parse_pages(info_page, sessions_page, callback) {
       var data = window.document.getElementsByClassName('maintd');
 
       for (var i = 1; i < data.length; i += 2)
-        all_infos[data[i-1].innerText] = data[i].innerText;
+        all_infos[data[i-1].textContent.trim()] = data[i].textContent.trim();
 
-      // FIXME
       infos.usage = Number(/\d+/.exec(all_infos["使用流量(IPV4)"])[0]);
       infos.balance = Number(/\d+\.\d+/.exec(all_infos["帐户余额"])[0]);
     }
   });
 
   // Parse sessions page.
-  jsdom.env(info_page, function (err, window) {
+  jsdom.env(sessions_page, function (err, window) {
     if (err) {
       console.error('Error while parsing usereg sessions page: %s', err);
       callback(err);
@@ -124,15 +123,16 @@ function parse_pages(info_page, sessions_page, callback) {
       for (var i = ROW_LENGTH; i <= data.length - ROW_LENGTH; i += ROW_LENGTH) {
         infos.sessions.push({
           id: data[i].getElementsByTagName('input')[0].value,
-          ip: data[i + 1].innerText,
+          ip: data[i + 1].textContent.trim(),
           // Date only accept ISO format here.
-          start_time: new Date(data[i + 2].replace(' ', 'T') + '+08:00'),
-          usage: utils.parse_usage_str(data[i + 3].innerText),
-          device_name: data[i + 11].innerText
+          start_time: new Date(data[i + 2].textContent.trim().replace(' ', 'T') + '+08:00'),
+          usage: utils.parse_usage_str(data[i + 3].textContent.trim()),
+          device_name: data[i + 11].textContent.trim()
         });
       };
 
       // Done, return infos.
+      console.log('Got info: %s', JSON.stringify(infos));
       callback(null, infos);
     }
   });
