@@ -314,7 +314,7 @@ app.on('ready', function() {
   appIcon = new Tray(path.join(__dirname, '../resource/icon.png'));
 
   reset_menu();
-  appIcon.setToolTip('This is my application.');
+  appIcon.setToolTip('net.tsinghua');
 
   // Tray balloon, currently only supported in Windows.
   if (!config.username) {
