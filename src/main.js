@@ -158,6 +158,8 @@ function get_menu_template() {
 }
 
 function login() {
+  console.log('Logging in.');
+
   net.login(config.username, config.md5_pass, function (err) {
     if (!err)
       update_status();
@@ -165,6 +167,8 @@ function login() {
 }
 
 function logout() {
+  console.log('Logging out.');
+
   net.logout(function (err) {
     if (!err)
       update_status();
@@ -174,13 +178,13 @@ function logout() {
 // FIXME: This will close the menu if it is already open.
 function reset_menu() {
   if (appIcon) {
-    console.log('Reseting menu');
+    console.log('Reseting menu.');
     appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
   }
 }
 
 function update_status(callback) {
-  console.log('Updating status');
+  console.log('Updating status.');
 
   if (typeof callback === 'undefined') {
     callback = function () {};
