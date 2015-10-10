@@ -7,6 +7,14 @@ var BASE_URL = 'http://net.tsinghua.edu.cn';
 var STATUS_URL = BASE_URL + '/rad_user_info.php';
 var LOGIN_URL = BASE_URL + '/do_login.php';
 
+var USER_AGENT = 'Unknown';
+if (process.platform == 'darwin')
+  USER_AGENT = 'Mozilla/5.0 (Mac OS X)';
+else if (process.platform == 'win32')
+  USER_AGENT = 'Windows NT';
+else if (process.platform == 'linux')
+  USER_AGENT = 'Linux';
+
 // Call callback(err).
 exports.login = function login(username, md5_pass, callback) {
   if (typeof callback === 'undefined') {
@@ -21,7 +29,8 @@ exports.login = function login(username, md5_pass, callback) {
         password: '{MD5_HEX}' + md5_pass,
         ac_id: 1
       },
-      encoding: null
+      encoding: null,
+      headers: {'User-Agent': USER_AGENT}
     },
     function (err, r, body) {
       body = utils.gb2312_to_utf8(body);
