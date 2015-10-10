@@ -178,7 +178,7 @@ function logout() {
 function logout_session(id) {
   console.log('Logging out session %s.', id);
 
-  usereg.logout_session(function (err) {
+  usereg.logout_session(config.username, config.md5_pass, id, function (err) {
     if (!err)
       update_all();  // Might be current session, so update status as well.
   });
