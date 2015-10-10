@@ -200,7 +200,7 @@ function update_status(callback) {
   console.log('Updating status.');
 
   if (typeof callback === 'undefined') {
-    callback = function () {};
+    callback = function (err) {};
   }
 
   net.get_status(function (err, infos) {
@@ -226,7 +226,7 @@ function update_status(callback) {
       }
     }
     reset_menu();
-    callback();
+    callback(err);
   });
 }
 
@@ -234,7 +234,7 @@ function update_infos(callback) {
   console.log('Updating infos using usereg.');
 
   if (typeof callback === 'undefined') {
-    callback = function () {};
+    callback = function (err) {};
   }
 
   usereg.get_infos(config.username, config.md5_pass, function (err, infos) {
@@ -244,9 +244,9 @@ function update_infos(callback) {
       total_usage = infos.usage;
       balance = infos.balance;
       sessions = infos.sessions;
+      reset_menu();
     }
-    reset_menu();
-    callback();
+    callback(err);
   });
 }
 
