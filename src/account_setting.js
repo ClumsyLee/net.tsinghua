@@ -11,5 +11,5 @@ exports.get_username = function get_username() {
 exports.save_account = function save_account() {
   config.username = document.getElementById('username').value;
   config.md5_pass = md5(document.getElementById('password').value);
-  fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config), "utf-8");
+  fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config, null, 4), "utf-8");
 }
