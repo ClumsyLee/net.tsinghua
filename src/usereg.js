@@ -64,9 +64,11 @@ exports.logout_session = function logout_session(username, md5_pass, id, callbac
         form: {
           action: 'drops',
           user_ip: id + ','
-        }
+        },
+        encoding: null
       },
       function (err, r, body) {
+        body = utils.gb2312_to_utf8(body);
         if (err) {
           console.error('Error while logging out session %s: %s', id, err);
           callback(err);
@@ -75,7 +77,7 @@ exports.logout_session = function logout_session(username, md5_pass, id, callbac
           callback(null);
         } else {
           console.error('Failed to send logout request for session %s: %s',
-                        id, err);
+                        id, body);
           callback(body);
         }
       });
@@ -99,6 +101,7 @@ function login(username, md5_pass, callback) {
       encoding: null
     },
     function (err, r, body) {
+      body = utils.gb2312_to_utf8(body);
       if (err) {
         console.error('Error while logging into usereg: %s', err);
         callback(err);
@@ -106,7 +109,6 @@ function login(username, md5_pass, callback) {
         console.info('Logged into usereg using %s', username);
         callback(null);
       } else {
-        body = utils.gb2312_to_utf8(body);
         console.error('Failed to login to usereg: %s', body);
         callback(body);
       }

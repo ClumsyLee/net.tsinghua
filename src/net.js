@@ -24,6 +24,7 @@ exports.login = function login(username, md5_pass, callback) {
       encoding: null
     },
     function (err, r, body) {
+      body = utils.gb2312_to_utf8(body);
       if (err) {
         console.error('Error while logging in: %s.', err);
         callback(err);
@@ -31,7 +32,6 @@ exports.login = function login(username, md5_pass, callback) {
         console.info('Logged in using %s', username);
         callback(null);
       } else {
-        body = utils.gb2312_to_utf8(body);
         console.error('Failed to login: %s', body);
         callback(body);
       }
