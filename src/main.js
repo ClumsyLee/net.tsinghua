@@ -121,8 +121,12 @@ function get_menu_template() {
     template.push({label: '无设备在线', enabled: false});
   } else {
     template.push({label: '当前在线', enabled: false});
+
     sessions.forEach(function (session) {
-      template.push({label: session.device_name, submenu: [
+      var label = session.device_name;
+      if (session.ip == last_session.ip)  // Current session.
+        label += '（本机）';
+      template.push({label: label, submenu: [
         {label: session.ip, enabled: false},
         {label: utils.time_passed_str(session.start_time) + '上线',
          enabled: false},
