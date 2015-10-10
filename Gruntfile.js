@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         appDirectory: 'build/<%= pkg.name %>-win32-ia32',
         outputDirectory: 'build/win32-ia32-installer',
         authors: 'Thomas Lee',
-        remoteReleases: 'https://net-tsinghua.herokuapp.com/update/win32/0.0.0/RELEASES'
+        remoteReleases: 'https://github.com/ThomasLee969/net.tsinghua'
       }
     },
     shell: {
