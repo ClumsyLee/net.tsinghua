@@ -169,6 +169,7 @@ function logout() {
   });
 }
 
+// FIXME: This will close the menu if it is already open.
 function reset_menu() {
   if (appIcon) {
     console.log('Reseting menu');
@@ -231,7 +232,19 @@ app.on('ready', function() {
   reset_menu();
   appIcon.setToolTip('This is my application.');
 
+  // Tray balloon, currently only supported in Windows.
+  if (!config.username) {
+    appIcon.displayBalloon({
+      title: '未设置帐号',
+      content: '右键点击状态栏图标 > 账号设置'
+    });
+  }
+  appIcon.on('balloon-clicked', function () {
+    account_setting();
+  });
+
   refresh();  // First shot.
+
   checkForUpdates();
 });
 
