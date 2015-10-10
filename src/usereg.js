@@ -5,10 +5,10 @@ var request = require('request').defaults({jar: true});
 
 var utils = require('./utils');
 
-BASE_URL = 'http://usereg.tsinghua.edu.cn';
-LOGIN_URL = BASE_URL + '/do.php';
-INFO_URL = BASE_URL + '/user_info.php';
-SESSIONS_URL = BASE_URL + '/online_user_ipv4.php';
+var BASE_URL = 'http://usereg.tsinghua.edu.cn';
+var LOGIN_URL = BASE_URL + '/do.php';
+var INFO_URL = BASE_URL + '/user_info.php';
+var SESSIONS_URL = BASE_URL + '/online_user_ipv4.php';
 
 // Call callback(err, infos).
 // infos:

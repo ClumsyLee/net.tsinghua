@@ -3,9 +3,9 @@ var request = require('request');
 
 var utils = require('./utils')
 
-BASE_URL = 'http://net.tsinghua.edu.cn';
-STATUS_URL = BASE_URL + '/rad_user_info.php';
-LOGIN_URL = BASE_URL + '/do_login.php';
+var BASE_URL = 'http://net.tsinghua.edu.cn';
+var STATUS_URL = BASE_URL + '/rad_user_info.php';
+var LOGIN_URL = BASE_URL + '/do_login.php';
 
 // Call callback(err).
 exports.login = function login(username, md5_pass, callback) {
