@@ -137,7 +137,7 @@ function get_menu_template() {
     {type: 'separator'},
     {label: '上线', click: login},
     {label: '下线', click: logout},
-    {label: '现在刷新', click: update_status},
+    {label: '现在刷新', click: refresh},
 
     // Config.
     {type: 'separator'},
@@ -175,8 +175,12 @@ function reset_menu() {
   }
 }
 
-function update_status() {
+function update_status(callback) {
   console.log('Updating status');
+
+  if (typeof callback === 'undefined') {
+    callback = function () {};
+  }
 
   net.get_status(function (err, infos) {
     if (err) {
@@ -200,21 +204,25 @@ function update_status() {
         last_session.usage = infos.usage;
       }
     }
+    callback();
     reset_menu();
   });
 }
 
+function refresh() {
+  update_status(function () {
+    // Try to login if needed.
+    if (status == 'OFFLINE' && config.auto_manage && config.username)
+      login();
+  });
+}
+setInterval(refresh, config.status_update_interval_msec);
+
+// FIXME: Looks ugly now.
 function account_setting() {
   var dialog = new BrowserWindow({width: 220, height: 120, resizable: false});
   dialog.loadUrl('file://' + __dirname + '/account_setting.html');
 }
-
-setInterval(function () {
-  update_status();
-  // Try to login if needed.
-  if (status == 'OFFLINE' && config.auto_manage && config.username)
-    login();
-}, config.status_update_interval_msec);
 
 app.on('ready', function() {
   appIcon = new Tray(__dirname + '/tray_icon.png');
@@ -222,7 +230,7 @@ app.on('ready', function() {
   reset_menu();
   appIcon.setToolTip('This is my application.');
 
-  update_status();  // First shot.
+  refresh();  // First shot.
   checkForUpdates();
 });
 
