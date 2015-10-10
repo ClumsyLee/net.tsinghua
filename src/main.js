@@ -69,6 +69,7 @@ if (process.platform == 'darwin') {
 // Load config.
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
+var path = require('path');
 
 var net = require('./net');
 var utils = require('./utils')
@@ -227,7 +228,7 @@ function account_setting() {
 }
 
 app.on('ready', function() {
-  appIcon = new Tray(__dirname + '/tray_icon.png');
+  appIcon = new Tray(path.join(__dirname, '../resource/icon.png'));
 
   reset_menu();
   appIcon.setToolTip('This is my application.');
