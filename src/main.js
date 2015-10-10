@@ -72,6 +72,7 @@ var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
 var path = require('path');
 
 var net = require('./net');
+var usereg = require('./usereg');
 var utils = require('./utils')
 
 var status = 'UNKNOWN';
@@ -212,14 +213,47 @@ function update_status(callback) {
   });
 }
 
-function refresh() {
+function update_infos(callback) {
+  console.log('Updating infos using usereg.');
+
+  if (typeof callback === 'undefined') {
+    callback = function () {};
+  }
+
+  usereg.get_infos(config.username, config.md5_pass, function (err, infos) {
+    if (err) {
+      console.error('Failed to update infos using usereg: %s', err);
+    } else {
+      total_usage = infos.usage;
+      balance = infos.balance;
+      sessions = infos.sessions;
+    }
+  })
+}
+
+// Apart from updating data, we need to do some actions when status updated.
+function refresh_status() {
   update_status(function () {
     // Try to login if needed.
     if (status == 'OFFLINE' && config.auto_manage && config.username)
       login();
   });
 }
-setInterval(refresh, config.status_update_interval_msec);
+
+// Updating data is all we need.
+function refresh_infos() {
+  update_infos();
+}
+
+// Refresh all.
+function refresh() {
+  refresh_status();
+  refresh_infos();
+}
+
+// Set clocks.
+setInterval(refresh_status, config.status_update_interval_msec);
+setInterval(refresh_infos, config.info_update_interval_msec);
 
 // FIXME: Looks ugly now.
 function account_setting() {
