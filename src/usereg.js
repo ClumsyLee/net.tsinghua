@@ -95,7 +95,8 @@ function login(username, md5_pass, callback) {
         action: 'login',
         user_login_name: username,
         user_password: md5_pass
-      }
+      },
+      encoding: null
     },
     function (err, r, body) {
       if (err) {
@@ -105,6 +106,7 @@ function login(username, md5_pass, callback) {
         console.info('Logged into usereg using %s', username);
         callback(null);
       } else {
+        body = utils.gb2312_to_utf8(body);
         console.error('Failed to login to usereg: %s', body);
         callback(body);
       }
