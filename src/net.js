@@ -37,6 +37,7 @@ exports.login = function login(username, md5_pass, callback) {
 
 // Call callback(err).
 exports.logout = function logout(callback) {
+  // FIXME: Ugly, use || or something to fix it?
   if (typeof callback === 'undefined') {
     callback = function (err) {};
   }
