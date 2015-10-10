@@ -45,15 +45,14 @@ module.exports = function(grunt) {
                  '--app-version=<%= pkg.version %> --overwrite=true'
       },
       zip_win32: {
-        command: 'zip --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
+        command: 'zip -q --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
       },
       zip_darwin: {
-        command: 'cd <%= path.darwin %> && zip -r --symlinks ' +
+        command: 'cd <%= path.darwin %> && zip -rq --symlinks ' +
                  '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
       mkdir: {
-        command: 'mkdir <%= path.release %>',
-        failOnError: false
+        command: 'mkdir <%= path.release %>'
       },
       mv_files: {
         command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
@@ -64,9 +63,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-electron-installer');
 
-  grunt.registerTask('win32', ['shell:mkdir', 'shell:build_win32',
-                               'create-windows-installer']);
+  grunt.registerTask('win32', ['shell:build_win32', 'create-windows-installer']);
   grunt.registerTask('darwin', ['shell:mkdir', 'shell:build_darwin']);
   grunt.registerTask('release', ['shell:zip_win32', 'shell:zip_darwin',
-                                 'shell:mkdir', 'shell:mv_files']);
+                                 'shell:mv_files']);
 };
