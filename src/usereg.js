@@ -2,7 +2,6 @@ var jsdom = require('jsdom');
 var fs = require('fs');
 var jquery = fs.readFileSync(__dirname + "/jquery.js", "utf-8");
 var request = require('request').defaults({jar: true});
-var encoding = require('encoding');
 
 var utils = require('./utils');
 
@@ -120,8 +119,8 @@ function parse_pages(info_page, sessions_page, callback) {
     callback = function (err, infos) {};
   }
 
-  info_page = encoding.convert(info_page, 'UTF-8', 'GB2312').toString();
-  sessions_page = encoding.convert(sessions_page, 'UTF-8', 'GB2312').toString();
+  info_page = utils.gb2312_to_utf8(info_page);
+  sessions_page = utils.gb2312_to_utf8(sessions_page);
 
   var infos = {};
 

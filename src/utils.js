@@ -1,3 +1,5 @@
+var encoding = require('encoding');
+
 exports.time_passed_str = function time_passed_str(t) {
   if (t == null)
     return '从未';
@@ -51,4 +53,8 @@ exports.balance_str = function balance_str(balance) {
     return '未知';
   else
     return balance.toFixed(2) + '元';
+}
+
+exports.gb2312_to_utf8 = function gb2312_to_utf8(s) {
+  return encoding.convert(s, 'UTF-8', 'GB2312').toString();
 }

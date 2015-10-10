@@ -1,6 +1,8 @@
 var jsdom = require('jsdom');
 var request = require('request');
 
+var utils = require('./utils')
+
 BASE_URL = 'http://net.tsinghua.edu.cn';
 STATUS_URL = BASE_URL + '/rad_user_info.php';
 LOGIN_URL = BASE_URL + '/do_login.php';
@@ -18,7 +20,8 @@ exports.login = function login(username, md5_pass, callback) {
         username: username,
         password: '{MD5_HEX}' + md5_pass,
         ac_id: 1
-      }
+      },
+      encoding: null
     },
     function (err, r, body) {
       if (err) {
@@ -28,7 +31,7 @@ exports.login = function login(username, md5_pass, callback) {
         console.info('Logged in using %s', username);
         callback(null);
       } else {
-        console.error('Failed to login: %s', body);
+        console.error('Failed to login: %s', utils.gb2312_to_utf8(body));
         callback(body);
       }
     }
