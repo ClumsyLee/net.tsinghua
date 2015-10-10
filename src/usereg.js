@@ -11,6 +11,12 @@ INFO_URL = BASE_URL + '/user_info.php';
 SESSIONS_URL = BASE_URL + '/online_user_ipv4.php';
 
 // Call callback(err, infos).
+// infos:
+// {
+//   usage: ...,
+//   balance: ...,
+//   sessions: [...]
+// }
 exports.get_infos = function get_infos(username, md5_pass, callback) {
   if (typeof callback === 'undefined') {
     callback = function (err, infos) {};
@@ -93,8 +99,8 @@ function parse_pages(info_page, sessions_page, callback) {
       for (var i = 1; i < data.length; i += 2)
         all_infos[data[i-1].innerText] = data[i].innerText;
 
-      infos.balance = Number(/\d+\.\d+/.exec(all_infos["帐户余额"])[0]);
       infos.usage = Number(/\d+/.exec(all_infos["使用流量(IPV4)"])[0]);
+      infos.balance = Number(/\d+\.\d+/.exec(all_infos["帐户余额"])[0]);
     }
   });
 
