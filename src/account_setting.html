@@ -4,9 +4,20 @@
     <meta charset="utf-8">
     <title>帐号设置</title>
     <script>
-      var account_setting = require('./account_setting');
-      function function_name(argument) {
-        // body...
+      var fs = require('fs');
+      var md5 = require('md5');
+      var config;
+
+      function get_username() {
+        config = JSON.parse(fs.readFileSync(__dirname + "/config.json",
+                                  "utf-8"));
+        document.getElementById('username').value = config.username;
+      }
+
+      function save_account() {
+        config.username = document.getElementById('username').value;
+        config.md5_pass = md5(document.getElementById('password').value);
+        fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config, null, 4), "utf-8");
       }
     </script>
   </head>
@@ -31,13 +42,13 @@
       <tr>
         <td colspan="2">
           <center>
-            <input type="button" name="submit" value="确认" onclick="account_setting.save_account();window.close();">
+            <input type="button" name="submit" value="确认" onclick="save_account();window.close();">
           </center>
         </td>
       </tr>
     </table>
   </body>
   <script>
-    account_setting.get_username();
+    get_username();
   </script>
 </html>

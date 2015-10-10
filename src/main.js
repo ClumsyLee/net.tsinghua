@@ -68,7 +68,7 @@ if (process.platform == 'darwin') {
 
 // Load config.
 var fs = require('fs');
-var config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
+var config = {};
 var path = require('path');
 
 var net = require('./net');
@@ -150,7 +150,11 @@ function get_menu_template() {
     // Config.
     {type: 'separator'},
     {label: '自动管理', type: 'checkbox', checked: config.auto_manage,
-     click: function () { config.auto_manage = !config.auto_manage; }},
+     click: function () {
+      console.log('Auto manage: %s => %s', config.auto_manage, !config.auto_manage);
+      config.auto_manage = !config.auto_manage;
+      save_config();
+    }},
     {label: '账号设置...', click: account_setting},
 
     // About.
@@ -161,6 +165,17 @@ function get_menu_template() {
     {type: 'separator'},
     {label: '退出', click: function() { app.quit(); }}
   ]);
+}
+
+function load_config() {
+  console.log('Loading config.');
+  config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
+}
+load_config();
+
+function save_config() {
+  console.log('Saving config.');
+  fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config, null, 4), "utf-8");
 }
 
 function login() {
@@ -284,8 +299,12 @@ setInterval(refresh_infos, config.info_update_interval_msec);
 
 // FIXME: Looks ugly now.
 function account_setting() {
-  var dialog = new BrowserWindow({width: 220, height: 120, resizable: false});
+  var dialog = new BrowserWindow({width: 400, height: 220, resizable: true});
   dialog.loadUrl('file://' + __dirname + '/account_setting.html');
+  dialog.on('close', function () {
+    load_config();
+    refresh();
+  });
 }
 
 app.on('ready', function() {
