@@ -141,7 +141,8 @@ function get_menu_template() {
 
     // Config.
     {type: 'separator'},
-    {label: '自动管理', type: 'checkbox', checked: config.auto_manage},
+    {label: '自动管理', type: 'checkbox', checked: config.auto_manage,
+     click: function () { config.auto_manage = !config.auto_manage; }},
     {label: '账号设置...', click: account_setting},
 
     // About.
@@ -150,7 +151,7 @@ function get_menu_template() {
 
     // Quit.
     {type: 'separator'},
-    {label: '退出', click: function() {app.quit();}}
+    {label: '退出', click: function() { app.quit(); }}
   ]);
 }
 
