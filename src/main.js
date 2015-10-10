@@ -212,8 +212,8 @@ function update_status(callback) {
         last_session.usage = infos.usage;
       }
     }
-    callback();
     reset_menu();
+    callback();
   });
 }
 
@@ -232,7 +232,9 @@ function update_infos(callback) {
       balance = infos.balance;
       sessions = infos.sessions;
     }
-  })
+    reset_menu();
+    callback();
+  });
 }
 
 // Apart from updating data, we need to do some actions when status updated.
