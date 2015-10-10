@@ -135,6 +135,8 @@ function get_menu_template() {
       ]});
     });
   }
+  // FIXME: Currently it seems there's not menu.aboutToShow.
+  // So time will be valid only when status_update_interval_msec < 60s
   template.push({label: '上次更新：' + utils.time_passed_str(last_check),
                  enabled: false});
 
