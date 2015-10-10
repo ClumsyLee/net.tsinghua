@@ -31,28 +31,24 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      build: {
-        win32: {
-          command: 'electron-packager . <%= pkg.name %> --platform=win32 ' +
-                   '--arch=ia32 --out=build/ --version=<%= electron_version %> ' +
-                   '--asar=true --ignore=build/ --icon=resource/icon.ico ' +
-                   '--app-version=<%= pkg.version %> --overwrite=true'
-        },
-        darwin: {
-          command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
-                   '--arch=x64 --out=build/ --version=<%= electron_version %> ' +
-                   '--ignore=build/ --icon=resource/icon.icns ' +
-                   '--app-version=<%= pkg.version %> --overwrite=true'
-        }
+      build_win32: {
+        command: 'electron-packager . <%= pkg.name %> --platform=win32 ' +
+                 '--arch=ia32 --out=build/ --version=<%= electron_version %> ' +
+                 '--asar=true --ignore=build/ --icon=resource/icon.ico ' +
+                 '--app-version=<%= pkg.version %> --overwrite=true'
       },
-      zip: {
-        win32: {
-          command: 'zip --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
-        },
-        darwin: {
-          command: 'cd <%= path.darwin %> && zip -r --symlinks ' +
-                   '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
-        }
+      build_darwin: {
+        command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
+                 '--arch=x64 --out=build/ --version=<%= electron_version %> ' +
+                 '--ignore=build/ --icon=resource/icon.icns ' +
+                 '--app-version=<%= pkg.version %> --overwrite=true'
+      },
+      zip_win32: {
+        command: 'zip --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
+      },
+      zip_darwin: {
+        command: 'cd <%= path.darwin %> && zip -r --symlinks ' +
+                 '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
       mv_files: {
         command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
@@ -63,7 +59,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-electron-installer');
 
-  grunt.registerTask('win32', ['shell:build:win32', 'create-windows-installer']);
-  grunt.registerTask('osx', ['shell:build:darwin']);
-  grunt.registerTask('release', ['shell:zip', 'shell:mv_files']);
+  grunt.registerTask('win32', ['shell:build_win32', 'create-windows-installer']);
+  grunt.registerTask('darwin', ['shell:build_darwin']);
+  grunt.registerTask('release', ['shell:zip_win32', 'shell:zip_darwin',
+                                 'shell:mv_files']);
 };
