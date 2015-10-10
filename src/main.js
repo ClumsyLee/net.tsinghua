@@ -2,6 +2,7 @@ var app = require('app');
 var Menu = require('menu');
 var Tray = require('tray');
 var BrowserWindow = require('browser-window');
+var shell = require('shell');
 
 var checkForUpdates = function () {};
 
@@ -159,7 +160,9 @@ function get_menu_template() {
 
     // About.
     {type: 'separator'},
-    {label: '关于 ' + app.getName(), role: 'about'},
+    {label: '关于 ' + app.getName(), click: function () {
+      shell.openExternal('https://github.com/ThomasLee969/net.tsinghua');
+    }},
 
     // Quit.
     {type: 'separator'},
