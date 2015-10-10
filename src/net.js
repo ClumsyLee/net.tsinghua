@@ -22,7 +22,7 @@ exports.login = function login(username, md5_pass, callback) {
     },
     function (err, r, body) {
       if (err) {
-        console.error('Error while logging in: %s', err);
+        console.error('Error while logging in: %s.', err);
         callback(err);
       } else if (body == 'Login is successful.') {
         console.info('Logged in using %s', username);
@@ -50,11 +50,14 @@ exports.logout = function logout(callback) {
     },
     function (err, r, body) {
       if (err) {
-        console.error('Error while logging out: %s', err);
+        console.error('Error while logging out: %s.', err);
         callback(err);
-      } else {
-        console.info('Logged out');
+      } else if (body == 'Logout is successful.') {
+        console.info('Logged out.');
         callback(null);
+      } else {
+        console.error('Failed to logout: %s', body);
+        callback(body);
       }
     }
   );
