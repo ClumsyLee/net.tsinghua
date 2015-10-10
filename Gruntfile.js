@@ -10,6 +10,15 @@ module.exports = function(grunt) {
     path: {
       win32: 'build/<%= pkg.name %>-win32-ia32',
       win32_installer: 'build/win32-ia32-installer',
+      darwin: 'build/<%= pkg.name %>-darwin-x64'
+    },
+    file: {
+      setup_exe: '<%= path.win32_installer %>/Setup.exe',
+      RELEASES: '<%= path.win32_installer %>/RELEASES',
+      nupkg_full: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-full.nupkg',
+      nupkg_delta: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-delta.nupkg',
+      win32_zip: 'build/release/<%= pkg.name %>-v<%= pkg.version %>-win32-ia32.zip',
+      darwin_zip: 'build/release/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip'
     },
     electron_version: '0.33.6',
 
@@ -22,23 +31,39 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      win32: {
-        command: 'electron-packager . <%= pkg.name %> --platform=win32 ' +
-                 '--arch=ia32 --out=build/ --version=<%= electron_version %> ' +
-                 '--asar=true --ignore=build/ --icon=resource/icon.ico ' +
-                 '--app-version=<%= pkg.version %> --overwrite=true'
+      build: {
+        win32: {
+          command: 'electron-packager . <%= pkg.name %> --platform=win32 ' +
+                   '--arch=ia32 --out=build/ --version=<%= electron_version %> ' +
+                   '--asar=true --ignore=build/ --icon=resource/icon.ico ' +
+                   '--app-version=<%= pkg.version %> --overwrite=true'
+        },
+        darwin: {
+          command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
+                   '--arch=x64 --out=build/ --version=<%= electron_version %> ' +
+                   '--ignore=build/ --icon=resource/icon.icns ' +
+                   '--app-version=<%= pkg.version %> --overwrite=true'
+        }
       },
-      darwin: {
-        command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
-                 '--arch=x64 --out=build/ --version=<%= electron_version %> ' +
-                 '--ignore=build/ --icon=resource/icon.icns ' +
-                 '--app-version=<%= pkg.version %> --overwrite=true'
+      zip: {
+        win32: {
+          command: 'zip --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
+        },
+        darwin: {
+          command: 'cd <%= path.darwin %> && zip -r --symlinks ' +
+                   '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
+        }
+      },
+      mv_files: {
+        command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
+                 '<%= file.nupkg_delta %> release/'
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-electron-installer');
 
-  grunt.registerTask('win32', ['shell:win32', 'create-windows-installer']);
-  grunt.registerTask('osx', ['shell:darwin']);
+  grunt.registerTask('win32', ['shell:build:win32', 'create-windows-installer']);
+  grunt.registerTask('osx', ['shell:build:darwin']);
+  grunt.registerTask('release', ['shell:zip', 'shell:mv_files']);
 };
