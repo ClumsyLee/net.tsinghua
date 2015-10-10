@@ -50,6 +50,41 @@ exports.get_infos = function get_infos(username, md5_pass, callback) {
 }
 
 // Call callback(err).
+exports.logout_session = function logout_session(username, md5_pass, id, callback) {
+  if (typeof callback === 'undefined') {
+    callback = function (err) {};
+  }
+
+  login(username, md5_pass, function (err) {
+    if (err) {
+      callback(err);
+    } else {
+      // Logged into usereg, logout session.
+      request.post({
+        url: SESSIONS_URL,
+        form: {
+          action: 'drops',
+          user_ip: id + ','
+        }
+      },
+      function (err, r, body) {
+        if (err) {
+          console.error('Error while logging out session %s: %s', id, err);
+          callback(err);
+        } else if (body == '下线请求已发送') {
+          console.log('Request to log out session %s sent', id);
+          callback(null);
+        } else {
+          console.error('Failed to send logout request for session %s: %s',
+                        id, err);
+          callback(body);
+        }
+      });
+    }
+  });
+}
+
+// Call callback(err).
 function login(username, md5_pass, callback) {
   if (typeof callback === 'undefined') {
     callback = function (err) {};

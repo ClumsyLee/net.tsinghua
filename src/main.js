@@ -127,7 +127,7 @@ function get_menu_template() {
         {label: utils.time_passed_str(session.start_time) + '上线',
          enabled: false},
         {label: '≥ ' + utils.usage_str(session.usage), enabled: false},
-        {label: '下线'}
+        {label: '下线', click: function () { logout_session(session.id); }}
       ]});
     });
   }
@@ -162,7 +162,7 @@ function login() {
 
   net.login(config.username, config.md5_pass, function (err) {
     if (!err)
-      update_status();
+      update_all();
   });
 }
 
@@ -171,7 +171,16 @@ function logout() {
 
   net.logout(function (err) {
     if (!err)
-      update_status();
+      update_all();
+  });
+}
+
+function logout_session(id) {
+  console.log('Logging out session %s.', id);
+
+  usereg.logout_session(function (err) {
+    if (!err)
+      update_all();  // Might be current session, so update status as well.
   });
 }
 
@@ -235,6 +244,11 @@ function update_infos(callback) {
     reset_menu();
     callback();
   });
+}
+
+function update_all() {
+  update_status();
+  update_infos();
 }
 
 // Apart from updating data, we need to do some actions when status updated.
