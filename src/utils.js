@@ -31,6 +31,21 @@ exports.usage_str = function usage_str(usage) {
     return (usage / 1e9).toFixed(2) + 'G'
 }
 
+exports.parse_usage_str = function parse_usage_str(s) {
+  var num = Number(s.substr(0, s.length - 1));
+  var unit = s[s.length - 1].toUpperCase();
+
+  var ratio;
+  switch (unit) {
+    case 'B': ratio = 1;   break;
+    case 'K': ratio = 1e3; break;
+    case 'M': ratio = 1e6; break;
+    case 'G': ratio = 1e9; break;
+  }
+
+  return Math.round(num * ratio);
+}
+
 exports.balance_str = function balance_str(balance) {
   if (balance == null)
     return '未知';
