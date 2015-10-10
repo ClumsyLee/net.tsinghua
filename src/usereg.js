@@ -94,7 +94,7 @@ function parse_pages(info_page, sessions_page, callback) {
         all_infos[data[i-1].innerText] = data[i].innerText;
 
       infos.balance = Number(/\d+\.\d+/.exec(all_infos["帐户余额"])[0]);
-      infos.balance = Number(/\d+/.exec(all_infos["使用流量(IPV4)"])[0]);
+      infos.usage = Number(/\d+/.exec(all_infos["使用流量(IPV4)"])[0]);
     }
   });
 
