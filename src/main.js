@@ -244,6 +244,7 @@ function update_infos(callback) {
       total_usage = infos.usage;
       balance = infos.balance;
       sessions = infos.sessions;
+      last_check = new Date();  // Record current time.
       reset_menu();
     }
     callback(err);
