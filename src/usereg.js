@@ -2,6 +2,7 @@ var jsdom = require('jsdom');
 var fs = require('fs');
 var jquery = fs.readFileSync(__dirname + "/jquery.js", "utf-8");
 var request = require('request').defaults({jar: true});
+var encoding = require('encoding');
 
 var utils = require('./utils');
 
@@ -78,10 +79,14 @@ function login(username, md5_pass, callback) {
 }
 
 // Call callback(err, infos).
+// TODO: catch errors.
 function parse_pages(info_page, sessions_page, callback) {
   if (typeof callback === 'undefined') {
     callback = function (err, infos) {};
   }
+
+  encoding.convert(info_page, 'UTF-8', 'GB2312').toString();
+  encoding.convert(sessions_page, 'UTF-8', 'GB2312').toString();
 
   var infos = {};
 
@@ -99,6 +104,7 @@ function parse_pages(info_page, sessions_page, callback) {
       for (var i = 1; i < data.length; i += 2)
         all_infos[data[i-1].innerText] = data[i].innerText;
 
+      // FIXME
       infos.usage = Number(/\d+/.exec(all_infos["使用流量(IPV4)"])[0]);
       infos.balance = Number(/\d+\.\d+/.exec(all_infos["帐户余额"])[0]);
     }
