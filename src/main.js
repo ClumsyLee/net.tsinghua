@@ -237,7 +237,7 @@ app.on('ready', function() {
   if (!config.username) {
     appIcon.displayBalloon({
       title: '未设置帐号',
-      content: '右键点击状态栏图标 > 账号设置'
+      content: '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置'
     });
   }
   appIcon.on('balloon-clicked', function () {
