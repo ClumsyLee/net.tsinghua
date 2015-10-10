@@ -27,12 +27,20 @@ module.exports = function(grunt) {
                  '--arch=x64 --out=build/ --version=0.33.6 '
                  '--ignore=build/ --icon=resource/icon.icns '
                  '--app-version=<%= pkg.version %>'
+      },
+      'clean-win32': {
+        command: 'rm -rf build/<%= pkg.name %>-win32-ia32/'
+      },
+      'clean-darwin': {
+        command: 'rm -rf build/<%= pkg.name %>-darwin-x64/'
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-electron-installer');
 
-  grunt.registerTask('win32', ['shell:win32', 'create-windows-installer']);
-  grunt.registerTask('osx', ['shell:darwin']);
+  grunt.registerTask('win32', ['shell:clean-win32', 'shell:win32',
+                               'create-windows-installer']);
+  grunt.registerTask('osx', ['shell:clean-darwin', 'shell:darwin']);
+  grunt.registerTask('clean', ['shell:clean-darwin', 'shell:clean-win32']);
 };
