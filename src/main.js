@@ -29,15 +29,16 @@ if (process.platform == 'darwin') {
   });
   autoUpdater.setFeedUrl('https://net-tsinghua.herokuapp.com/update/osx/' +
                          app.getVersion());
+
   checkForUpdates = function () {
     autoUpdater.checkForUpdates();
   }
 } else if (process.platform == 'win32') {
   // Codes from http://www.mylifeforthecode.com/tag/windows-installer/.
+  var updateDotExe = path.resolve(path.dirname(process.execPath),
+                                  '..', 'Update.exe');
   var handleSquirrelEvent = function() {
     function executeSquirrelCommand(args, done) {
-      var updateDotExe = path.resolve(path.dirname(process.execPath),
-                                      '..', 'Update.exe');
       var child = cp.spawn(updateDotExe, args, { detached: true });
       child.on('close', function(code) {
         done();
@@ -81,6 +82,18 @@ if (process.platform == 'darwin') {
   if (handleSquirrelEvent()) {
     return;
   }
+
+  checkForUpdates = function () {
+    var child = cp.spawn(updateDotExe, [
+        "--update",
+        "https://net-tsinghua.herokuapp.com/update/win32/" + app.getVersion()
+      ], { detached: true });
+    child.on('close', function(code) {
+      // Update is done, just quit.
+      console.log('Update is done. The update should be available next time ' +
+                  'you open the app.');
+    });
+  };
 }
 
 // Load config.
