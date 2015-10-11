@@ -1,8 +1,0 @@
-{
-    "auto_manage": true,
-    "auto_manage_interval_msec": 30000,
-    "info_update_interval_msec": 300000,
-    "status_update_interval_msec": 60000,
-    "username": "",
-    "md5_pass": ""
-}
