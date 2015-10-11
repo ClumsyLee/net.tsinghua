@@ -1,14 +1,15 @@
-var app = require('app');
-var Menu = require('menu');
-var Tray = require('tray');
-var BrowserWindow = require('browser-window');
-var shell = require('shell');
 var cp = require('child_process');
+var path = require('path');
+
+var app = require('app');
+var BrowserWindow = require('browser-window');
+var Menu = require('menu');
+var shell = require('shell');
+var Tray = require('tray');
 
 // Load config.
-var fs = require('fs');
 var config = {};
-var path = require('path');
+var configure = require('./configure');
 
 var net = require('./net');
 var usereg = require('./usereg');
@@ -184,7 +185,7 @@ function get_menu_template() {
      click: function () {
       console.log('Auto manage: %s => %s', config.auto_manage, !config.auto_manage);
       config.auto_manage = !config.auto_manage;
-      save_config();
+      configure.save(config);
     }},
     {label: '账号设置...', click: account_setting},
 
@@ -198,17 +199,6 @@ function get_menu_template() {
     {type: 'separator'},
     {label: '退出', click: function() { app.quit(); }}
   ]);
-}
-
-function load_config() {
-  console.log('Loading config.');
-  config = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf-8"));
-}
-load_config();
-
-function save_config() {
-  console.log('Saving config.');
-  fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config, null, 4), "utf-8");
 }
 
 function real_time_usage_str() {
@@ -344,23 +334,23 @@ function refresh() {
   refresh_infos();
 }
 
-// Set clocks.
-setInterval(refresh_status, config.status_update_interval_msec);
-setInterval(refresh_infos, config.info_update_interval_msec);
-
 // FIXME: Looks ugly now.
 function account_setting() {
   var dialog = new BrowserWindow({width: 400, height: 220, resizable: true});
   dialog.loadUrl('file://' + __dirname + '/account_setting.html');
   dialog.on('close', function () {
-    load_config();
+    config = configure.load();
     refresh();
   });
 }
 
 app.on('ready', function() {
-  appIcon = new Tray(path.join(__dirname, '../resource/icon.png'));
+  config = configure.load();
+  // Set clocks.
+  setInterval(refresh_status, config.status_update_interval_msec);
+  setInterval(refresh_infos, config.info_update_interval_msec);
 
+  appIcon = new Tray(path.join(__dirname, '../resource/icon.png'));
   reset_menu();
 
   // Tray balloon, currently only supported in Windows.
@@ -382,3 +372,7 @@ app.on('ready', function() {
 });
 
 app.on('window-all-closed', function() {});
+
+app.on('quit', function () {
+  configure.save(config);
+});
