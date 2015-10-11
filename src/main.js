@@ -350,7 +350,8 @@ app.on('ready', function() {
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
 
-  appIcon = new Tray(path.join(__dirname, '../resource/tray_icon.png'));
+  // Set tray icon.
+  appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
   reset_menu();
 
   // Tray balloon, currently only supported in Windows.
