@@ -5,6 +5,34 @@ var BrowserWindow = require('browser-window');
 var shell = require('shell');
 var cp = require('child_process');
 
+// Load config.
+var fs = require('fs');
+var config = {};
+var path = require('path');
+
+var net = require('./net');
+var usereg = require('./usereg');
+var utils = require('./utils')
+
+var status = 'UNKNOWN';
+var last_session = {};
+var sessions = [];
+var last_check = null
+var total_usage = null;
+var balance = null;
+
+var STATUS_STR = {
+  UNKNOWN: '未知状态',
+  OFFLINE: '离线',
+  ONLINE: '在线',
+  OTHERS_ACCOUNT_ONLINE: '他人账号在线',
+  ERROR: '网络错误',
+  NO_CONNECTION: '无连接'
+}
+
+var appIcon = null;
+
+// Config auto update.
 var checkForUpdates = function () {};
 
 if (process.platform == 'darwin') {
@@ -95,33 +123,6 @@ if (process.platform == 'darwin') {
     });
   };
 }
-
-// Load config.
-var fs = require('fs');
-var config = {};
-var path = require('path');
-
-var net = require('./net');
-var usereg = require('./usereg');
-var utils = require('./utils')
-
-var status = 'UNKNOWN';
-var last_session = {};
-var sessions = [];
-var last_check = null
-var total_usage = null;
-var balance = null;
-
-var STATUS_STR = {
-  UNKNOWN: '未知状态',
-  OFFLINE: '离线',
-  ONLINE: '在线',
-  OTHERS_ACCOUNT_ONLINE: '他人账号在线',
-  ERROR: '网络错误',
-  NO_CONNECTION: '无连接'
-}
-
-var appIcon = null;
 
 function get_menu_template() {
   var template = [];
