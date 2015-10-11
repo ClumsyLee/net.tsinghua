@@ -2,6 +2,8 @@
 
 清华大学自动联网助手
 
+下载[最新版本](http://net-tsinghua.herokuapp.com)
+
 ## 简单，但又好用
 
 当前状态，自动管理，手动操作，甚至管理其他链接…而这一切，都在一个小小的状态栏图标中。
@@ -35,11 +37,14 @@
 
 ## 跨平台
 
-在用 Mac？别担心，这里有 OS X 版本。放心，所有功能都在，甚至包括自动更新。
+在用 Mac？OS X 版本就是为你准备的。放心，所有功能都在，甚至包括自动更新。
 
 ![Mac Screen Shot](resource/screenshot-darwin.png)
 
 ## 开源
 
-net.tsinghua 是一个开源项目，使用 MIT LICENCE，这意味着你可以对它进行任何改进。发现了
-bug？想增加一个功能？Send a pull request!
+net.tsinghua 是一个开源项目，使用 MIT 许可证，这意味着你可以对它进行任何改进。
+
+发现了 bug？想增加一个功能？
+[提交 issue](https://github.com/ThomasLee969/net.tsinghua/issues/new) 或者
+[发起 pull request](https://github.com/ThomasLee969/net.tsinghua/compare/)!
