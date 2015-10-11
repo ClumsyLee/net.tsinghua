@@ -243,6 +243,11 @@ function reset_menu() {
   if (appIcon) {
     console.log('Reseting menu.');
     appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
+
+    var real_time_usage = total_usage;
+    sessions.forEach(function (session) { real_time_usage += session.usage; });
+    appIcon.setToolTip(STATUS_STR[status] + ' - 本月已用' +
+                       utils.usage_str(real_time_usage) + '（实时）');
   }
 }
 
@@ -344,7 +349,6 @@ app.on('ready', function() {
   appIcon = new Tray(path.join(__dirname, '../resource/icon.png'));
 
   reset_menu();
-  appIcon.setToolTip('net.tsinghua');
 
   // Tray balloon, currently only supported in Windows.
   if (!config.username) {
