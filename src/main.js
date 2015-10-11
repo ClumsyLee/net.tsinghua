@@ -13,16 +13,18 @@ if (process.platform == 'darwin') {
     console.log(message);
   });
   autoUpdater.on('checking-for-update', function () {
-    console.log('Checking for update');
+    console.log('Checking for update.');
   });
   autoUpdater.on('update-available', function () {
-    console.log('Update available');
+    console.log('Update available.');
   });
   autoUpdater.on('update-not-available', function () {
-    console.log('Update not available');
+    console.log('Update not available.');
   });
-  autoUpdater.on('update-downloaded', function () {
-    console.log('Update downloaded');
+  autoUpdater.on('update-downloaded', function (
+      event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
+    console.log('Update downloaded, quit and update.');
+    quitAndUpdate();
   });
   autoUpdater.setFeedUrl('https://net-tsinghua.herokuapp.com/update/osx/' +
                          app.getVersion());
