@@ -211,12 +211,23 @@ function save_config() {
   fs.writeFileSync(__dirname + "/config.json", JSON.stringify(config, null, 4), "utf-8");
 }
 
+function real_time_usage_str() {
+  var real_time_usage = total_usage;
+  sessions.forEach(function (session) { real_time_usage += session.usage; });
+  return '本月已用 ' + utils.usage_str(real_time_usage) + '（实时）';
+}
+
 function login() {
   console.log('Logging in.');
 
   net.login(config.username, config.md5_pass, function (err) {
-    if (!err)
+    if (!err) {
       update_all();
+      appIcon.displayBalloon({
+        title: '上线成功',
+        content: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
+      });
+    }
   });
 }
 
@@ -224,8 +235,13 @@ function logout() {
   console.log('Logging out.');
 
   net.logout(function (err) {
-    if (!err)
+    if (!err) {
       update_all();
+      appIcon.displayBalloon({
+        title: '下线成功',
+        content: real_time_usage_str()
+      });
+    }
   });
 }
 
@@ -244,10 +260,7 @@ function reset_menu() {
     console.log('Reseting menu.');
     appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
 
-    var real_time_usage = total_usage;
-    sessions.forEach(function (session) { real_time_usage += session.usage; });
-    appIcon.setToolTip(STATUS_STR[status] + ' - 本月已用' +
-                       utils.usage_str(real_time_usage) + '（实时）');
+    appIcon.setToolTip(STATUS_STR[status] + ' - ' + real_time_usage_str());
   }
 }
 
@@ -358,7 +371,9 @@ app.on('ready', function() {
     });
   }
   appIcon.on('balloon-clicked', function () {
-    account_setting();
+    // If username has not been set, this must be a account-setting balloon.
+    if (!config.username)
+      account_setting();
   });
 
   refresh();  // First shot.
