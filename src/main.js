@@ -3,6 +3,7 @@ var Menu = require('menu');
 var Tray = require('tray');
 var BrowserWindow = require('browser-window');
 var shell = require('shell');
+var cp = require('child_process');
 
 var checkForUpdates = function () {};
 
@@ -32,40 +33,53 @@ if (process.platform == 'darwin') {
     autoUpdater.checkForUpdates();
   }
 } else if (process.platform == 'win32') {
-  var squirrelCommand = process.argv[1];
-  switch (squirrelCommand) {
-    case '--squirrel-install':
-      console.log('App installed.');
-      app.quit();
-      break;
-    case '--squirrel-updated':
-      console.log('App updated.');
+  // Codes from http://www.mylifeforthecode.com/tag/windows-installer/.
+  var handleSquirrelEvent = function() {
+    function executeSquirrelCommand(args, done) {
+      var updateDotExe = path.resolve(path.dirname(process.execPath),
+                                      '..', 'Update.exe');
+      var child = cp.spawn(updateDotExe, args, { detached: true });
+      child.on('close', function(code) {
+        done();
+      });
+    }
 
-      // Optionally do things such as:
-      //
-      // - Install desktop and start menu shortcuts
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and
-      //   explorer context menus
+    function install(done) {
+      var target = path.basename(process.execPath);
+      console.log('Creating shortcut.');
+      executeSquirrelCommand(["--createShortcut", target], done);
+    }
 
-      // Always quit when done
-      app.quit();
-      break;
-    case '--squirrel-uninstall':
-      // Undo anything you did in the --squirrel-install and
-      // --squirrel-updated handlers
+    function uninstall(done) {
+      var target = path.basename(process.execPath);
+      console.log('Removing shortcut.');
+      executeSquirrelCommand(["--removeShortcut", target], done);
+    }
 
-      // Always quit when done
-      console.log('Uninstalling.');
-      app.quit();
-      break;
-    case '--squirrel-obsolete':
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
-      console.log('About to update to a newer version.');
-      app.quit();
-      break;
+    var squirrelEvent = process.argv[1];
+    switch (squirrelEvent) {
+      case '--squirrel-install':
+        console.log('App installed.');
+        install(app.quit);
+        return true;
+      case '--squirrel-updated':
+        console.log('App updated.');
+        install(app.quit);
+        return true;
+      case '--squirrel-obsolete':
+        console.log('About to update to a newer version, quit now.');
+        app.quit();
+        return true;
+      case '--squirrel-uninstall':
+        console.log('Uninstalling.');
+        uninstall(app.quit);
+        return true;
+    }
+    return false;
+  };
+
+  if (handleSquirrelEvent()) {
+    return;
   }
 }
 
