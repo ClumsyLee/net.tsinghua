@@ -212,10 +212,11 @@ function login() {
 
   net.login(config.username, config.md5_pass, function (err) {
     if (!err) {
-      update_all();
-      appIcon.displayBalloon({
-        title: '上线成功',
-        content: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
+      update_all(function () {
+        appIcon.displayBalloon({
+          title: '上线成功',
+          content: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
+        });
       });
     }
   });
@@ -226,10 +227,11 @@ function logout() {
 
   net.logout(function (err) {
     if (!err) {
-      update_all();
-      appIcon.displayBalloon({
-        title: '下线成功',
-        content: real_time_usage_str()
+      update_all(function () {
+        appIcon.displayBalloon({
+          title: '下线成功',
+          content: real_time_usage_str()
+        });
       });
     }
   });
@@ -309,9 +311,10 @@ function update_infos(callback) {
   });
 }
 
-function update_all() {
-  update_status();
-  update_infos();
+function update_all(callback) {
+  update_status(function () {
+    update_infos(callback);
+  });
 }
 
 // Apart from updating data, we need to do some actions when status updated.
