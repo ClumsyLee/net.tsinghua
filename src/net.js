@@ -3,7 +3,7 @@ var request = require('request');
 
 var utils = require('./utils')
 
-var BASE_URL = 'http://net.tsinghua.edu.cn';
+var BASE_URL = 'https://net.tsinghua.edu.cn';
 var STATUS_URL = BASE_URL + '/rad_user_info.php';
 var LOGIN_URL = BASE_URL + '/do_login.php';
 

@@ -1,10 +1,13 @@
 var jsdom = require('jsdom');
 var fs = require('fs');
-var request = require('request').defaults({jar: true});
+var request = require('request').defaults({
+  jar: true,
+  rejectUnauthorized: false
+});
 
 var utils = require('./utils');
 
-var BASE_URL = 'http://usereg.tsinghua.edu.cn';
+var BASE_URL = 'https://usereg.tsinghua.edu.cn';
 var LOGIN_URL = BASE_URL + '/do.php';
 var INFO_URL = BASE_URL + '/user_info.php';
 var SESSIONS_URL = BASE_URL + '/online_user_ipv4.php';
