@@ -8,19 +8,25 @@ var config_path = path.join(
 exports.load = function load() {
   console.log('Loading config from %s.', config_path);
 
+  // Default config.
+  var config = {
+    auto_manage: true,
+    auto_manage_interval_msec: 30000,
+    info_update_interval_msec: 300000,
+    status_update_interval_msec: 60000,
+    username: "",
+    md5_pass: ""
+  };
+
   try {
-    return JSON.parse(fs.readFileSync(config_path, "utf-8"));
+    var custom_config = JSON.parse(fs.readFileSync(config_path, "utf-8"));
+    for (var attr in custom_config)
+      config[attr] = custom_config[attr];
   } catch (err) {
-    console.log('Failed to load config (%s), use default.', err);
-    return {
-      auto_manage: true,
-      auto_manage_interval_msec: 30000,
-      info_update_interval_msec: 300000,
-      status_update_interval_msec: 60000,
-      username: "",
-      md5_pass: ""
-    };
+    console.log('Failed to load config: %s', err);
   }
+
+  return config;
 }
 
 exports.save = function save(data) {
