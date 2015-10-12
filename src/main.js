@@ -381,8 +381,3 @@ app.on('ready', function() {
 });
 
 app.on('window-all-closed', function() {});
-
-// FIXME: maybe not needed? may cause config == {};
-app.on('quit', function () {
-  configure.save(config);
-});
