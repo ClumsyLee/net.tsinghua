@@ -7,6 +7,8 @@ var Menu = require('menu');
 var shell = require('shell');
 var Tray = require('tray');
 
+var notifier = require('node-notifier');
+
 // Load config.
 var config = {};
 var configure = require('./configure');
@@ -213,9 +215,9 @@ function login() {
   net.login(config.username, config.md5_pass, function (err) {
     if (!err) {
       update_all(function () {
-        appIcon.displayBalloon({
+        notifier.notify({
           title: '上线成功',
-          content: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
+          message: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
         });
       });
     }
@@ -228,9 +230,9 @@ function logout() {
   net.logout(function (err) {
     if (!err) {
       update_all(function () {
-        appIcon.displayBalloon({
+        notifier.notify({
           title: '下线成功',
-          content: real_time_usage_str()
+          message: real_time_usage_str()
         });
       });
     }
@@ -348,7 +350,8 @@ function account_setting() {
 }
 
 app.on('ready', function() {
-  config = configure.load();
+  config = configure.load();  // Load config.
+
   // Set clocks.
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
@@ -357,18 +360,20 @@ app.on('ready', function() {
   appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
   reset_menu();
 
-  // Tray balloon, currently only supported in Windows.
-  if (!config.username) {
-    appIcon.displayBalloon({
-      title: '未设置帐号',
-      content: '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置'
-    });
-  }
-  appIcon.on('balloon-clicked', function () {
-    // If username has not been set, this must be a account-setting balloon.
-    if (!config.username)
+  // Set notifications.
+  notifier.on('click', function (notifierObject, options) {
+    if (options.title == '未设置帐号')
       account_setting();
   });
+
+  // Prompt users to set account if they haven't.
+  if (!config.username) {
+    notifier.notify({
+      title: '未设置帐号',
+      message: '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置',
+      wait: true
+    });
+  }
 
   refresh();  // First shot.
 
@@ -377,6 +382,7 @@ app.on('ready', function() {
 
 app.on('window-all-closed', function() {});
 
+// FIXME: maybe not needed? may cause config == {};
 app.on('quit', function () {
   configure.save(config);
 });
