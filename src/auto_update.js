@@ -1,3 +1,4 @@
+var path = require('path');
 var app = require('app');
 
 // init_updater: Return true if need to exist.

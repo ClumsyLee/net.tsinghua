@@ -24,8 +24,6 @@ var config = configure.load();  // Load config before anything else.
 if (auto_update.init_updater())
   return;
 
-app.dock.hide()  // Hide dock icon as soon as possible.
-
 // Status.
 var status = 'UNKNOWN';
 var STATUS_STR = {
@@ -272,12 +270,15 @@ function account_setting() {
 }
 
 app.on('ready', function() {
+  console.log('App ready.');
+
   // Set clocks.
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
 
   // Set tray icon.
   if (process.platform == 'darwin') {
+    app.dock.hide()  // Hide dock icon.
     appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
     appIcon.setPressedImage(path.join(__dirname, '../resource/tray_icon_inversed.png'));
   } else {
