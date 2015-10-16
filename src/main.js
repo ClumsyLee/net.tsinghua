@@ -287,7 +287,7 @@ function refresh() {
 
 // FIXME: Looks ugly now.
 function account_setting() {
-  var dialog = new BrowserWindow({width: 400, height: 220, resizable: true});
+  var dialog = new BrowserWindow({width: 500, height: 220, resizable: true});
   dialog.loadUrl('file://' + __dirname + '/account_setting.html');
   dialog.on('close', function () {
     config = configure.load();
@@ -321,7 +321,9 @@ app.on('ready', function() {
 
   // Prompt users to set account if they haven't.
   if (!config.username)
-    notify('未设置帐号', '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置');
+    notify('未设置帐号', '点击这里设置帐号\n或者稍后' +
+           (process.platform == 'darwin' ? '左' : '右') +
+           '键点击状态栏图标 > 账号设置');
 
   refresh();  // First shot.
 
