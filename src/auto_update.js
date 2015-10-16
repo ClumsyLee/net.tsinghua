@@ -49,13 +49,17 @@ if (process.platform == 'darwin') {
   function install(done) {
     var target = path.basename(process.execPath);
     console.log('Creating shortcut.');
-    executeSquirrelCommand(["--createShortcut", target], done);
+    executeSquirrelCommand(['--createShortcut', target,
+                            '--shortcut-locations', 'Desktop,StartMenu'],
+                           done);
   }
 
   function uninstall(done) {
     var target = path.basename(process.execPath);
     console.log('Removing shortcut.');
-    executeSquirrelCommand(["--removeShortcut", target], done);
+    executeSquirrelCommand(['--removeShortcut', target,
+                            '--shortcut-locations', 'Desktop,StartMenu'],
+                           done);
   }
 
   exports.init_updater = function() {
