@@ -50,7 +50,7 @@ if (process.platform == 'darwin') {
     var target = path.basename(process.execPath);
     console.log('Creating shortcut.');
     executeSquirrelCommand(['--createShortcut', target,
-                            '--shortcut-locations', 'Desktop,StartMenu'],
+                            '--shortcut-locations', 'Desktop,StartMenu,Startup'],
                            done);
   }
 
@@ -58,7 +58,7 @@ if (process.platform == 'darwin') {
     var target = path.basename(process.execPath);
     console.log('Removing shortcut.');
     executeSquirrelCommand(['--removeShortcut', target,
-                            '--shortcut-locations', 'Desktop,StartMenu'],
+                            '--shortcut-locations', 'Desktop,StartMenu,Startup'],
                            done);
   }
 
