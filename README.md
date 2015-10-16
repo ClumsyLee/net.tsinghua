@@ -12,7 +12,7 @@ Icon created by riyazali from the Noun Project.
 
 当前状态，自动管理，手动操作，甚至管理其他链接…而这一切，都在一个小小的状态栏图标中。
 
-![Windows Screen Shot](resource/screenshot-win32.png)
+![Windows Screen Shot](resource/screenshot-win10.png)
 
 ## 就在你手边
 
@@ -23,13 +23,13 @@ Icon created by riyazali from the Noun Project.
 
 上线和下线的时候，会有消息提示你。
 
-![Windows Notification](resource/notification-win32.png)
+![Windows Notification](resource/notification-win10.png)
 
 ### 鼠标悬停
 
 想快速知道现在的状态？鼠标放在图标上就行了！
 
-![Windows tool-tip](resource/tool-tip-win32.png)
+![Windows tool-tip](resource/tool-tip-win10.png)
 
 ## 永远崭新
 
@@ -43,7 +43,7 @@ Icon created by riyazali from the Noun Project.
 
 在用 Mac？OS X 版本就是为你准备的。放心，所有功能都在，甚至包括自动更新。
 
-![Mac Screen Shot](resource/screenshot-darwin.png)
+![Mac Screen Shot](resource/screenshot-osx.png)
 
 ## 开源
 
