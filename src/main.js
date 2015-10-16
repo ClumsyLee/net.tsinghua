@@ -1,12 +1,6 @@
-// Built-in modules.
-var path = require('path');
-
 // Electron modules.
 var app = require('app');
 var BrowserWindow = require('browser-window');
-var Menu = require('menu');
-var shell = require('shell');
-var Tray = require('tray');
 
 // 3rd party modules.
 var notifier = require('node-notifier');
@@ -16,24 +10,16 @@ var auto_update = require('./auto_update');
 var configure = require('./configure');
 var net = require('./net');
 var usereg = require('./usereg');
-var utils = require('./utils');
+var tray = require('./tray');
 
 var config = configure.load();  // Load config before anything else.
 
 // Init auto update.
-if (auto_update.init_updater())
+if (auto_update.init_updater())  // Need to exit now.
   return;
 
 // Status.
 var status = 'UNKNOWN';
-var STATUS_STR = {
-  UNKNOWN: '未知状态',
-  OFFLINE: '离线',
-  ONLINE: '在线',
-  OTHERS_ACCOUNT_ONLINE: '他人账号在线',
-  ERROR: '网络错误',
-  NO_CONNECTION: '无连接'
-};
 var last_session = {};
 
 // Account info.
@@ -43,91 +29,6 @@ var balance = null;
 // Sessions.
 var sessions = [];
 var last_check = null
-
-
-var appIcon = null;
-
-function get_menu_template() {
-  var template = [];
-
-  // Status.
-  var status_str = STATUS_STR[status];
-  // Show session usage if possible.
-  if ((status == 'ONLINE' || status == 'OTHERS_ACCOUNT_ONLINE') && last_session)
-    status_str = status_str + ' - ' + utils.usage_str(last_session.usage);
-  template.push({label: status_str, enabled: false});
-
-  // Account info.
-  template.push({type: 'separator'});
-  if (!config.username) {
-    template.push({label: '未设置帐号', enabled: false});
-  } else {
-    template.push({label: config.username, enabled: false});
-    template.push({label: '本月流量：' + utils.usage_str(total_usage),
-                   enabled: false});
-    template.push({label: '当前余额：' + utils.balance_str(balance),
-                   enabled: false});
-  }
-
-  // Sessions.
-  template.push({type: 'separator'});
-  if (sessions.length == 0) {
-    template.push({label: '无设备在线', enabled: false});
-  } else {
-    template.push({label: '当前在线', enabled: false});
-
-    sessions.forEach(function (session) {
-      var label = session.device_name;
-      if (session.ip == last_session.ip)  // Current session.
-        label += '（本机）';
-      template.push({label: label, submenu: [
-        {label: session.ip, enabled: false},
-        {label: utils.time_passed_str(session.start_time) + '上线',
-         enabled: false},
-        {label: '≥ ' + utils.usage_str(session.usage), enabled: false},
-        {label: '下线', click: function () { logout_session(session.id); }}
-      ]});
-    });
-  }
-  // FIXME: Currently it seems there's not menu.aboutToShow.
-  // So time will be valid only when status_update_interval_msec < 60s.
-  template.push({label: '上次更新：' + utils.time_passed_str(last_check),
-                 enabled: false});
-
-  return template.concat([
-    // Actions.
-    {type: 'separator'},
-    {label: '上线', click: login},
-    {label: '下线', click: logout},
-    {label: '现在刷新', click: refresh},
-
-    // Config.
-    {type: 'separator'},
-    {label: '自动管理', type: 'checkbox', checked: config.auto_manage,
-     click: function () {
-      console.log('Auto manage: %s => %s', config.auto_manage, !config.auto_manage);
-      config.auto_manage = !config.auto_manage;
-      configure.save(config);
-    }},
-    {label: '账号设置...', click: account_setting},
-
-    // About.
-    {type: 'separator'},
-    {label: '关于 ' + app.getName(), click: function () {
-      shell.openExternal('https://github.com/ThomasLee969/net.tsinghua');
-    }},
-
-    // Quit.
-    {type: 'separator'},
-    {label: '退出', click: function() { app.quit(); }}
-  ]);
-}
-
-function real_time_usage_str() {
-  var real_time_usage = total_usage;
-  sessions.forEach(function (session) { real_time_usage += session.usage; });
-  return '本月已用 ' + utils.usage_str(real_time_usage) + '（实时）';
-}
 
 function login() {
   console.log('Logging in.');
@@ -166,16 +67,6 @@ function logout_session(id) {
     if (!err)
       update_all();  // Might be current session, so update status as well.
   });
-}
-
-// FIXME: This will close the menu if it is already open.
-function reset_menu() {
-  if (appIcon) {
-    console.log('Reseting menu.');
-    appIcon.setContextMenu(Menu.buildFromTemplate(get_menu_template()));
-
-    appIcon.setToolTip(STATUS_STR[status] + ' - ' + real_time_usage_str());
-  }
 }
 
 function update_status(callback) {
@@ -259,6 +150,11 @@ function refresh() {
   refresh_infos();
 }
 
+function auto_manage_changed(auto_manage) {
+  config.auto_manage = auto_manage;
+  configure.save();
+}
+
 // FIXME: Looks ugly now.
 function account_setting() {
   var dialog = new BrowserWindow({width: 400, height: 220, resizable: true});
@@ -269,13 +165,31 @@ function account_setting() {
   });
 }
 
+function reset_menu() {
+  tray.reset_menu({
+    username: config.username,
+    status: status,
+    last_session: last_session,
+    total_usage: total_usage,
+    balance: balance,
+    sessions: sessions,
+    last_check: last_check
+  });
+}
+
+tray.on('login', login);
+tray.on('logout', logout);
+tray.on('logout_session', logout_session);
+tray.on('refresh', refresh);
+tray.on('auto_manage_changed', auto_manage_changed);
+tray.on('account_setting', account_setting);
+
 app.on('ready', function() {
   // Set clocks.
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
 
-  // Set tray icon.
-  appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
+  // Set tray menu.
   reset_menu();
 
   // Set notifications.
@@ -294,8 +208,7 @@ app.on('ready', function() {
   }
 
   refresh();  // First shot.
-
-  auto_update.check_updates();
+  auto_update.check_updates();  // Check for updates.
 });
 
 app.on('window-all-closed', function() {});
