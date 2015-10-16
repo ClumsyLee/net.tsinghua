@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       nupkg_delta: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-delta.nupkg',
       win32_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-win32-ia32.zip',
       darwin_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip',
-      darwin_dmg: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>.dmg'
+      darwin_dmg: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.dmg'
     },
     electron_version: '0.33.6',
 
