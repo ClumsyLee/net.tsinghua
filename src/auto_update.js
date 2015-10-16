@@ -1,3 +1,5 @@
+var app = require('app');
+
 // init_updater: Return true if need to exist.
 // check_updates: Update if possible.
 
