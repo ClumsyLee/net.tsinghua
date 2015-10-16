@@ -277,7 +277,13 @@ app.on('ready', function() {
   setInterval(refresh_infos, config.info_update_interval_msec);
 
   // Set tray icon.
-  appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
+  if (process.platform == 'darwin') {
+    appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
+    appIcon.setPressedImage(path.join(__dirname, '../resource/tray_icon_inversed.png'));
+  } else {
+    appIcon = new Tray(path.join(__dirname, '../resource/tray_icon.png'));
+  }
+
   reset_menu();
 
   // Set notifications.
