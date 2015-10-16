@@ -4,6 +4,10 @@
 
 下载[最新版本](http://net-tsinghua.herokuapp.com)
 
+![Icon](resource/logo.png)
+
+Icon created by riyazali from the Noun Project.
+
 ## 简单，但又好用
 
 当前状态，自动管理，手动操作，甚至管理其他链接…而这一切，都在一个小小的状态栏图标中。
@@ -15,11 +19,11 @@
 当你不想用它时，干脆完全不理它吧。不过，一旦有任何新消息，它都会第一时间通知你，快速而有效。
 谁想一遍遍点开浏览器上的 net.tsinghua.edu.cn 标签？
 
-### 弹出气泡
+### 消息提醒
 
-上线和下线的时候，会有气泡提示你。
+上线和下线的时候，会有消息提示你。
 
-![Windows Balloon](resource/balloon-win32.png)
+![Windows Notification](resource/notification-win32.png)
 
 ### 鼠标悬停
 
