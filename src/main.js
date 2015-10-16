@@ -47,6 +47,37 @@ var last_check = null
 
 var appIcon = null;
 
+// Notification implement.
+var notify = function (title, message) {};
+var on_notification_clicked = function (callback) {};
+
+if (process.platform == 'darwin') {
+  notify = function (title, message) {
+    notifier.notify({
+      title: title,
+      message: message,
+      wait: true,
+      icon: path.join(__dirname, '../resource/icon.png')
+    });
+  };
+
+  on_notification_clicked = function (callback) {
+    notifier.on('click', callback);
+  };
+} else {
+  notify = function (title, message) {
+    appIcon.displayBalloon({
+      title: title,
+      content: message
+    });
+  };
+
+  on_notification_clicked = function (callback) {
+    appIcon.on('balloon-clicked', callback);
+  };
+}
+
+
 function get_menu_template() {
   var template = [];
 
@@ -135,10 +166,8 @@ function login() {
   net.login(config.username, config.md5_pass, function (err) {
     if (!err) {
       update_all(function () {
-        notifier.notify({
-          title: '上线成功',
-          message: sessions.length.toString() + ' 设备在线\n' + real_time_usage_str()
-        });
+        notify('上线成功',
+               sessions.length.toString() + ' 设备在线\n' + real_time_usage_str());
       });
     }
   });
@@ -150,10 +179,7 @@ function logout() {
   net.logout(function (err) {
     if (!err) {
       update_all(function () {
-        notifier.notify({
-          title: '下线成功',
-          message: real_time_usage_str()
-        });
+        notify('下线成功', real_time_usage_str());
       });
     }
   });
@@ -288,19 +314,14 @@ app.on('ready', function() {
   reset_menu();
 
   // Set notifications.
-  notifier.on('click', function (notifierObject, options) {
-    if (options.title == '未设置帐号')
+  on_notification_clicked(function () {
+    if (!config.username)  // Must be "Account not set" notification.
       account_setting();
   });
 
   // Prompt users to set account if they haven't.
-  if (!config.username) {
-    notifier.notify({
-      title: '未设置帐号',
-      message: '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置',
-      wait: true
-    });
-  }
+  if (!config.username)
+    notify('未设置帐号', '点击这里设置帐号\n或者稍后右键点击状态栏图标 > 账号设置');
 
   refresh();  // First shot.
 
