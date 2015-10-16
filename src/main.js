@@ -1,29 +1,31 @@
-var cp = require('child_process');
+// Built-in modules.
 var path = require('path');
 
+// Electron modules.
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var Menu = require('menu');
 var shell = require('shell');
 var Tray = require('tray');
 
+// 3rd party modules.
 var notifier = require('node-notifier');
 
-// Load config.
-var config = {};
+// Local modules.
+var auto_update = require('./auto_update');
 var configure = require('./configure');
-
 var net = require('./net');
 var usereg = require('./usereg');
-var utils = require('./utils')
+var utils = require('./utils');
 
+var config = configure.load();  // Load config before anything else.
+
+// Init auto update.
+if (auto_update.init_updater())
+  return;
+
+// Status.
 var status = 'UNKNOWN';
-var last_session = {};
-var sessions = [];
-var last_check = null
-var total_usage = null;
-var balance = null;
-
 var STATUS_STR = {
   UNKNOWN: '未知状态',
   OFFLINE: '离线',
@@ -31,101 +33,19 @@ var STATUS_STR = {
   OTHERS_ACCOUNT_ONLINE: '他人账号在线',
   ERROR: '网络错误',
   NO_CONNECTION: '无连接'
-}
+};
+var last_session = {};
+
+// Account info.
+var total_usage = null;
+var balance = null;
+
+// Sessions.
+var sessions = [];
+var last_check = null
+
 
 var appIcon = null;
-
-// Config auto update.
-var checkForUpdates = function () {};
-
-if (process.platform == 'darwin') {
-  // Auto updater for Darwin.
-  var autoUpdater = require('auto-updater');
-  autoUpdater.on('error', function (event, message) {
-    console.log(message);
-  });
-  autoUpdater.on('checking-for-update', function () {
-    console.log('Checking for update.');
-  });
-  autoUpdater.on('update-available', function () {
-    console.log('Update available.');
-  });
-  autoUpdater.on('update-not-available', function () {
-    console.log('Update not available.');
-  });
-  autoUpdater.on('update-downloaded', function (
-      event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
-    console.log('Update downloaded, quit and update.');
-    quitAndUpdate();
-  });
-  autoUpdater.setFeedUrl('https://net-tsinghua.herokuapp.com/update/osx/' +
-                         app.getVersion());
-
-  checkForUpdates = function () {
-    autoUpdater.checkForUpdates();
-  }
-} else if (process.platform == 'win32') {
-  // Codes from http://www.mylifeforthecode.com/tag/windows-installer/.
-  var updateDotExe = path.resolve(path.dirname(process.execPath),
-                                  '..', 'Update.exe');
-  var handleSquirrelEvent = function() {
-    function executeSquirrelCommand(args, done) {
-      var child = cp.spawn(updateDotExe, args, { detached: true });
-      child.on('close', function(code) {
-        done();
-      });
-    }
-
-    function install(done) {
-      var target = path.basename(process.execPath);
-      console.log('Creating shortcut.');
-      executeSquirrelCommand(["--createShortcut", target], done);
-    }
-
-    function uninstall(done) {
-      var target = path.basename(process.execPath);
-      console.log('Removing shortcut.');
-      executeSquirrelCommand(["--removeShortcut", target], done);
-    }
-
-    var squirrelEvent = process.argv[1];
-    switch (squirrelEvent) {
-      case '--squirrel-install':
-        console.log('App installed.');
-        install(app.quit);
-        return true;
-      case '--squirrel-updated':
-        console.log('App updated.');
-        install(app.quit);
-        return true;
-      case '--squirrel-obsolete':
-        console.log('About to update to a newer version, quit now.');
-        app.quit();
-        return true;
-      case '--squirrel-uninstall':
-        console.log('Uninstalling.');
-        uninstall(app.quit);
-        return true;
-    }
-    return false;
-  };
-
-  if (handleSquirrelEvent()) {
-    return;
-  }
-
-  checkForUpdates = function () {
-    var child = cp.spawn(updateDotExe, [
-        "--update",
-        "https://net-tsinghua.herokuapp.com/update/win32/" + app.getVersion()
-      ], { detached: true });
-    child.on('close', function(code) {
-      // Update is done, just quit.
-      console.log('Update is done. The update should be available next time ' +
-                  'you open the app.');
-    });
-  };
-}
 
 function get_menu_template() {
   var template = [];
@@ -350,8 +270,6 @@ function account_setting() {
 }
 
 app.on('ready', function() {
-  config = configure.load();  // Load config.
-
   // Set clocks.
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
@@ -377,7 +295,7 @@ app.on('ready', function() {
 
   refresh();  // First shot.
 
-  checkForUpdates();
+  auto_update.check_updates();
 });
 
 app.on('window-all-closed', function() {});
