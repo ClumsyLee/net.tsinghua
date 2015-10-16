@@ -24,6 +24,8 @@ var config = configure.load();  // Load config before anything else.
 if (auto_update.init_updater())
   return;
 
+app.dock.hide()  // Hide dock icon as soon as possible.
+
 // Status.
 var status = 'UNKNOWN';
 var STATUS_STR = {
