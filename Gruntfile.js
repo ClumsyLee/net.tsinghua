@@ -19,7 +19,8 @@ module.exports = function(grunt) {
       nupkg_full: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-full.nupkg',
       nupkg_delta: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-delta.nupkg',
       win32_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-win32-ia32.zip',
-      darwin_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip'
+      darwin_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip',
+      darwin_dmg: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>.dmg'
     },
     electron_version: '0.33.6',
 
@@ -60,6 +61,9 @@ module.exports = function(grunt) {
       mv_files: {
         command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
                  '<%= file.nupkg_delta %> <%= path.release %>'
+      },
+      appdmg: {
+        command: 'appdmg appdmg.json <%= file.darwin_dmg %>'
       }
     }
   });
@@ -69,5 +73,5 @@ module.exports = function(grunt) {
   grunt.registerTask('win32', ['shell:build_win32', 'create-windows-installer']);
   grunt.registerTask('darwin', ['shell:mkdir', 'shell:build_darwin', 'shell:sign_darwin']);
   grunt.registerTask('release', ['shell:zip_win32', 'shell:zip_darwin',
-                                 'shell:mv_files']);
+                                 'shell:mv_files', 'shell:appdmg']);
 };
