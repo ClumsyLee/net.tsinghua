@@ -54,10 +54,8 @@ module.exports = function(grunt) {
         command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
                  '--arch=x64 --out=build/ --version=<%= electron_version %> ' +
                  '--ignore=build/ --icon=resource/icon.icns ' +
-                 '--app-version=<%= pkg.version %> --overwrite=true'
-      },
-      sign_darwin: {
-        command: 'codesign -s "Thomas Lee" --deep <%= path.darwin %>/<%= pkg.name %>.app'
+                 '--app-version=<%= pkg.version %> --overwrite=true ' +
+                 '--sign="Thomas Lee"'
       },
       zip_win32: {
         command: 'zip -q --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
@@ -82,7 +80,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-electron-installer');
 
   grunt.registerTask('win32', ['shell:build_win32', 'create-windows-installer']);
-  grunt.registerTask('darwin', ['shell:mkdir', 'shell:build_darwin', 'shell:sign_darwin']);
+  grunt.registerTask('darwin', ['shell:mkdir', 'shell:build_darwin']);
   grunt.registerTask('release', ['shell:zip_win32', 'shell:zip_darwin',
                                  'shell:mv_files', 'shell:appdmg']);
 };
