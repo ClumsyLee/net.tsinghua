@@ -39,7 +39,15 @@ module.exports = function(grunt) {
         command: 'electron-packager . <%= pkg.name %> --platform=win32 ' +
                  '--arch=ia32 --out=build/ --version=<%= electron_version %> ' +
                  '--asar=true --ignore=build/ --icon=resource/icon.ico ' +
-                 '--app-version=<%= pkg.version %> --overwrite=true'
+                 '--app-version=<%= pkg.version %> --overwrite=true ' +
+                 '--version-string.CompanyName="Thomas Lee" ' +
+                 '--version-string.LegalCopyright="Copyright (c) 2015 Thomas Lee" ' +
+                 '--version-string.FileDescription=<%= pkg.name %> ' +
+                 '--version-string.OriginalFilename=<%= pkg.name %>.exe ' +
+                 '--version-string.FileVersion="<%= pkg.version %>" ' +
+                 '--version-string.ProductVersion=<%= pkg.version %> ' +
+                 '--version-string.ProductName=<%= pkg.name %> ' +
+                 '--version-string.InternalName=<%= pkg.name %>'
       },
       build_darwin: {
         command: 'electron-packager . <%= pkg.name %> --platform=darwin ' +
