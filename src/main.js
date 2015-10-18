@@ -109,8 +109,12 @@ function get_menu_template() {
 
     sessions.forEach(function (session) {
       var label = session.device_name;
-      if (session.ip == last_session.ip)  // Current session.
+
+      if (session.ip == last_session.ip) { // Current session.
         label += '（本机）';
+        last_session.id = session.id;  // Update id of the last session.
+      }
+
       template.push({label: label, submenu: [
         {label: session.ip, enabled: false},
         {label: utils.time_passed_str(session.start_time) + '上线',
@@ -227,7 +231,15 @@ function update_status(callback) {
         } else {
           status = 'OTHERS_ACCOUNT_ONLINE';
         }
+
         // Got something useful, update infos.
+        if (config.auto_manage && last_session.ip != infos.ip &&
+            last_session.id) {
+          // Ip changed, log out previous session.
+          console.log('Ip changed, logging out previous session %s',
+                      last_session.id);
+          logout_session(last_session.id);
+        }
         last_session.ip = infos.ip;
         last_session.start_time = infos.start_time;
         last_session.usage = infos.usage;
