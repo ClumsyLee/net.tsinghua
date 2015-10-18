@@ -43,7 +43,7 @@ Icon created by riyazali from the Noun Project.
 
 在用 Mac？OS X 版本就是为你准备的。放心，所有功能都在，甚至包括自动更新。
 
-![Mac Screen Shot](resource/screenshot-osx.png)
+![Mac Screen Shot](resource/screenshot-mac.png)
 
 ## 开源
 
