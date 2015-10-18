@@ -29,6 +29,8 @@ module.exports = function(grunt) {
       ia32: {
         appDirectory: '<%= path.win32 %>',
         outputDirectory: '<%= path.win32_installer %>',
+        certificateFile: 'resource/cert.cer',
+        setupIcon: 'resource/icon.ico',
         remoteReleases: 'https://github.com/ThomasLee969/net.tsinghua'
       }
     },
