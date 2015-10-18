@@ -1,2 +1,4 @@
 /node_modules/
 /build/
+/resource/cert.p12
+Thumbs.db
