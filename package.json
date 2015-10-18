@@ -1,6 +1,6 @@
 {
   "name": "net.tsinghua",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "A cross-platform auto-login utility for Tsinghua students",
   "main": "src/main.js",
   "homepage": "https://github.com/ThomasLee969/net.tsinghua",
