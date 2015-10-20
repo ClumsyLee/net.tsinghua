@@ -11,9 +11,10 @@ exports.load = function load() {
   // Default config.
   var config = {
     auto_manage: true,
-    auto_manage_interval_msec: 30000,
-    info_update_interval_msec: 300000,
-    status_update_interval_msec: 60000,
+    auto_manage_interval_msec: 30 * 1000,
+    info_update_interval_msec: 5 * 60 * 1000,
+    status_update_interval_msec: 60 * 1000,
+    auto_update_interval_msec: 24 * 60 * 60 * 1000,
     username: "",
     md5_pass: ""
   };

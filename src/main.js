@@ -313,6 +313,7 @@ app.on('ready', function() {
   // Set clocks.
   setInterval(refresh_status, config.status_update_interval_msec);
   setInterval(refresh_infos, config.info_update_interval_msec);
+  setInterval(auto_update.check_updates, config.auto_update_interval_msec);
 
   // Set tray icon.
   if (process.platform == 'darwin') {
