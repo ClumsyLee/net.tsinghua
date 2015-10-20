@@ -1,3 +1,4 @@
+var fs = require('fs');
 var path = require('path');
 var app = require('app');
 
@@ -48,6 +49,14 @@ if (process.platform == 'darwin') {
 
   function install(done) {
     var target = path.basename(process.execPath);
+
+    // Removing "Electron" shortcut from startup folder, if possible.
+    try {
+      fs.unlinkSync('%APPDATA%/Microsoft/Windows/Start Menu/Programs/Startup/Electron.lnk');
+    } catch (err) {
+      console.log('Unable to remove Electron.lnk from Startup folder: %s', err);
+    }
+
     console.log('Creating shortcut.');
     executeSquirrelCommand(['--createShortcut', target,
                             '--shortcut-locations', 'Desktop,StartMenu,Startup'],
