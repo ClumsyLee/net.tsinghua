@@ -52,7 +52,9 @@ if (process.platform == 'darwin') {
 
     // Removing "Electron" shortcut from startup folder, if possible.
     try {
-      fs.unlinkSync('%APPDATA%/Microsoft/Windows/Start Menu/Programs/Startup/Electron.lnk');
+      fs.unlinkSync(path.join(
+        process.env.APPDATA,
+        'Microsoft/Windows/Start Menu/Programs/Startup/Electron.lnk'));
     } catch (err) {
       console.log('Unable to remove Electron.lnk from Startup folder: %s', err);
     }
