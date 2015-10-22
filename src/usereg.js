@@ -1,8 +1,13 @@
 var jsdom = require('jsdom');
 var fs = require('fs');
+var path = require('path');
+
+var CERT_LIST = [fs.readFileSync(path.join(__dirname, '../certificate/2ac1f2ba.0')),
+                 fs.readFileSync(path.join(__dirname, '../certificate/5ad8a5d6.0'))];
+
 var request = require('request').defaults({
   jar: true,
-  rejectUnauthorized: false
+  agentOptions: {ca: CERT_LIST}
 });
 
 var utils = require('./utils');

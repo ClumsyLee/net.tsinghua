@@ -42,7 +42,7 @@ var balance = null;
 
 // Sessions.
 var sessions = [];
-var last_check = null
+var last_check = null;
 
 
 var appIcon = null;
@@ -317,7 +317,7 @@ app.on('ready', function() {
 
   // Set tray icon.
   if (process.platform == 'darwin') {
-    app.dock.hide()  // Hide dock icon.
+    app.dock.hide();  // Hide dock icon.
     appIcon = new Tray(path.join(__dirname, '../resource/tray_icon_Template.png'));
     appIcon.setPressedImage(path.join(__dirname, '../resource/tray_icon_inversed.png'));
   } else {
