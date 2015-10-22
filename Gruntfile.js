@@ -67,7 +67,7 @@ module.exports = function(grunt) {
                  '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
       mkdir: {
-        command: 'mkdir <%= path.release %>'
+        command: 'mkdir -p <%= path.release %>'
       },
       mv_files: {
         command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
