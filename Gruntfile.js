@@ -60,15 +60,15 @@ module.exports = function(grunt) {
                  '--app-version=<%= pkg.version %> --overwrite=true ' +
                  '--sign="Thomas Lee"'
       },
-      zip_win32: {
-        command: 'zip -q --junk-paths <%= file.win32_zip %> <%= file.setup_exe %>'
+      zip_setup_exe: {
+        command: '7z a <%= file.win32_zip %> %APPVEYOR_BUILD_FOLDER%/<%= file.setup_exe %>'
       },
-      zip_darwin: {
+      zip_app: {
         command: 'cd <%= path.darwin %> && zip -rq --symlinks ' +
                  '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
-      mv_files: {
-        command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
+      move_win32_files: {
+        command: 'move <%= file.RELEASES %> <%= file.nupkg_full %> ' +
                  '<%= file.nupkg_delta %> <%= path.release %>'
       },
       appdmg: {
@@ -82,8 +82,10 @@ module.exports = function(grunt) {
   grunt.registerTask('mkdir', function () {
     mkdirp(grunt.config(['path', 'release']));
   });
-  grunt.registerTask('win32', ['mkdir', 'shell:build_win32', 'create-windows-installer']);
-  grunt.registerTask('darwin', ['mkdir', 'shell:build_darwin']);
-  grunt.registerTask('release', ['mkdir', 'shell:zip_win32', 'shell:zip_darwin',
-                                 'shell:mv_files', 'shell:appdmg']);
+  grunt.registerTask('win32', ['mkdir', 'shell:build_win32',
+                               'create-windows-installer',
+                               'shell:zip_setup_exe',
+                               'shell:move_win32_files']);
+  grunt.registerTask('darwin', ['mkdir', 'shell:build_darwin',
+                                'shell:zip_app', 'shell:appdmg']);
 };
