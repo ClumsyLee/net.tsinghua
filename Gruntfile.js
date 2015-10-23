@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
-  var fs = require('fs.extra');
+  var fs = require('fs-extra');
   var path = require('path');
 
   var version = grunt.file.readJSON('package.json').version;
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       setup_exe: '<%= path.win32_installer %>/Setup.exe',
       RELEASES: '<%= path.win32_installer %>/RELEASES',
       nupkg_full: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-full.nupkg',
-      nupkg_delta: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-delta.nupkg',
+      // nupkg_delta: '<%= path.win32_installer %>/<%= pkg.name %>-<%= pkg.version %>-delta.nupkg',
       win32_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-win32-ia32.zip',
       darwin_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip',
       darwin_dmg: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.dmg'
@@ -35,8 +35,8 @@ module.exports = function(grunt) {
         certificateFile: 'resource/cert.p12',
         certificatePassword: process.env.CERTIFICATE_PASSWORD,
         iconUrl: 'https://raw.githubusercontent.com/ThomasLee969/net.tsinghua/master/resource/icon.ico',
-        setupIcon: 'resource/icon.ico',
-        remoteReleases: 'https://github.com/ThomasLee969/net.tsinghua'
+        setupIcon: 'resource/icon.ico'
+        // remoteReleases: 'https://github.com/ThomasLee969/net.tsinghua'
       }
     },
     shell: {
@@ -85,12 +85,13 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('move_win32_files', function () {
-    ['RELEASES', 'nupkg_full', 'nupkg_delta'].forEach(function (filename) {
+    ['RELEASES', 'nupkg_full'].forEach(function (filename) {
       var origin_path = grunt.config(['file', filename]);
       var basename = path.basename(origin_path);
       var new_path = path.join(grunt.config(['path', 'release']), basename);
 
-      fs.move(origin_path, new_path);
+      console.log('Moving %s to %s', origin_path, new_path);
+      fs.copySync(origin_path, new_path);
     });
   });
 
