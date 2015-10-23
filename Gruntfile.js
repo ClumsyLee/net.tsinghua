@@ -32,7 +32,7 @@ module.exports = function(grunt) {
         outputDirectory: '<%= path.win32_installer %>',
         authors: 'Thomas Lee',
         certificateFile: 'resource/cert.p12',
-        certificatePassword: '',
+        certificatePassword: process.env.CERTIFICATE_PASSWORD,
         iconUrl: 'https://raw.githubusercontent.com/ThomasLee969/net.tsinghua/master/resource/icon.ico',
         setupIcon: 'resource/icon.ico',
         remoteReleases: 'https://github.com/ThomasLee969/net.tsinghua'
