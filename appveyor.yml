@@ -1,0 +1,19 @@
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js
+  - ps: Install-Product node 0
+  # install modules
+  - npm install -g grunt-cli
+  - npm install
+  - npm uninstall grunt
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  # run tests
+  - grunt win32
+
+# Don't actually build.
+build: off
