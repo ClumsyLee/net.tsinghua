@@ -1,6 +1,6 @@
 # net.tsinghua
 
-[![Build status](https://ci.appveyor.com/api/projects/status/62y34l7g7xrjhcfw?svg=true)](https://ci.appveyor.com/project/ThomasLee969/net-tsinghua)
+[![Build Status](https://travis-ci.org/ThomasLee969/net.tsinghua.svg?branch=master)](https://travis-ci.org/ThomasLee969/net.tsinghua) [![Build status](https://ci.appveyor.com/api/projects/status/62y34l7g7xrjhcfw?svg=true)](https://ci.appveyor.com/project/ThomasLee969/net-tsinghua)
 
 清华大学自动联网助手
 
