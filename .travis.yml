@@ -3,9 +3,6 @@ language: objective-c
 os: osx
 
 install:
-  - brew install git-lfs
-  - git lfs fetch
-  - git lfs checkout
   - bash install_identity.sh
   - npm install
   - npm install -g grunt-cli electron-packager appdmg
