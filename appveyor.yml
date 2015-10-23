@@ -3,7 +3,7 @@ install:
   # Get the latest stable version of Node.js
   - ps: Install-Product node 0
   # install modules
-  - npm install -g grunt-cli
+  - npm install -g grunt-cli electron-packager
   - npm install
 
 # Post-install test scripts.
