@@ -1,0 +1,4 @@
+language: node_js
+os: osx
+before_script: npm install -g grunt-cli electron-packager
+script: grunt darwin
