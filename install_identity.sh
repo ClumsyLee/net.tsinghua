@@ -7,7 +7,7 @@ security default-keychain -s electron-app-build.keychain
 KEYCHAIN=~/Library/Keychains/electron-app-build.keychain
 
 echo "Adding distribution key"
-security import resource/cert.p12 -k $KEYCHAIN -P $KEY_PASSWORD -T /usr/bin/codesign
+security import resource/cert.p12 -k $KEYCHAIN -P $CERTIFICATE_PASSWORD -T /usr/bin/codesign
 
 echo "Unlock keychain"
 security unlock-keychain -p $CERTIFICATE_PASSWORD electron-app-build.keychain
