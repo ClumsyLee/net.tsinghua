@@ -3,7 +3,7 @@ language: objective-c
 os: osx
 
 install:
-  - security import resource/cert.p12 -P $CERTIFICATE_PASSWORD
+  - security import resource/cert.p12 -P $CERTIFICATE_PASSWORD -T /usr/bin/codesign
   - npm install
   - npm install -g grunt-cli electron-packager
 
