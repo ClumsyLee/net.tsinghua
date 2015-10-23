@@ -1,7 +1,8 @@
 module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
-  var mkdirp = require('mkdirp');
+  var fs = require('fs.extra');
+  var path = require('path');
 
   var version = grunt.file.readJSON('package.json').version;
 
@@ -67,10 +68,6 @@ module.exports = function(grunt) {
         command: 'cd <%= path.darwin %> && zip -rq --symlinks ' +
                  '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
-      move_win32_files: {
-        command: 'move <%= file.RELEASES %> <%= file.nupkg_full %> ' +
-                 '<%= file.nupkg_delta %> <%= path.release %>'
-      },
       appdmg: {
         command: 'appdmg appdmg.json <%= file.darwin_dmg %>'
       }
@@ -80,12 +77,27 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-electron-installer');
 
   grunt.registerTask('mkdir', function () {
-    mkdirp(grunt.config(['path', 'release']));
+    try {
+      fs.mkdirpSync(grunt.config(['path', 'release']));
+    } catch (err) {
+      console.error('Unable to create release directory: %s', err);
+    }
   });
+
+  grunt.registerTask('move_win32_files', function () {
+    ['RELEASES', 'nupkg_full', 'nupkg_delta'].forEach(function (filename) {
+      var origin_path = grunt.config(['file', filename]);
+      var basename = path.basename(origin_path);
+      var new_path = path.join(grunt.config(['path', 'release']), basename);
+
+      fs.move(origin_path, new_path);
+    });
+  });
+
   grunt.registerTask('win32', ['mkdir', 'shell:build_win32',
                                'create-windows-installer',
                                'shell:zip_setup_exe',
-                               'shell:move_win32_files']);
+                               'move_win32_files']);
   grunt.registerTask('darwin', ['mkdir', 'shell:build_darwin',
                                 'shell:zip_app', 'shell:appdmg']);
 };
