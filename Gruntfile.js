@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
+  var mkdirp = require('mkdirp');
 
   var version = grunt.file.readJSON('package.json').version;
 
@@ -66,12 +67,6 @@ module.exports = function(grunt) {
         command: 'cd <%= path.darwin %> && zip -rq --symlinks ' +
                  '../../<%= file.darwin_zip %> <%= pkg.name %>.app'
       },
-      mkdir_win32: {
-        command: 'if not exist <%= path.release %> mkdir <%= path.release %>'
-      },
-      mkdir_darwin: {
-        command: 'mkdir -p <%= path.release %>'
-      },
       mv_files: {
         command: 'mv <%= file.RELEASES %> <%= file.nupkg_full %> ' +
                  '<%= file.nupkg_delta %> <%= path.release %>'
@@ -84,8 +79,11 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-electron-installer');
 
-  grunt.registerTask('win32', ['shell:mkdir_win32', 'shell:build_win32', 'create-windows-installer']);
-  grunt.registerTask('darwin', ['shell:mkdir_darwin', 'shell:build_darwin']);
-  grunt.registerTask('release', ['shell:zip_win32', 'shell:zip_darwin',
+  grunt.registerTask('mkdir', function () {
+    mkdirp(grunt.config(['path', 'release']));
+  });
+  grunt.registerTask('win32', ['mkdir', 'shell:build_win32', 'create-windows-installer']);
+  grunt.registerTask('darwin', ['mkdir', 'shell:build_darwin']);
+  grunt.registerTask('release', ['mkdir', 'shell:zip_win32', 'shell:zip_darwin',
                                  'shell:mv_files', 'shell:appdmg']);
 };

@@ -10,7 +10,8 @@
     "grunt": "^0.4.5",
     "grunt-electron-installer": "^1.0.5",
     "grunt-shell": "^1.1.2",
-    "load-grunt-tasks": "^3.3.0"
+    "load-grunt-tasks": "^3.3.0",
+    "mkdirp": "^0.5.1"
   },
   "dependencies": {
     "encoding": "^0.1.11",
