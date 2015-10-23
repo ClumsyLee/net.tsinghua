@@ -21,7 +21,7 @@ exports.time_passed_str = function time_passed_str(t) {
 }
 
 exports.usage_str = function usage_str(usage) {
-  if (usage == null)
+  if (usage == null || isNaN(usage))
     return '未知';
   else if (usage < 1e3)
     return usage.toString() + 'B';
