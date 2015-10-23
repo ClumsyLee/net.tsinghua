@@ -2,6 +2,8 @@
 
 清华大学自动联网助手
 
+[![Build status](https://ci.appveyor.com/api/projects/status/62y34l7g7xrjhcfw?svg=true)](https://ci.appveyor.com/project/ThomasLee969/net-tsinghua)
+
 下载[最新版本](http://net-tsinghua.herokuapp.com)
 
 ![Icon](resource/logo.png)
