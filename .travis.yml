@@ -1,4 +1,10 @@
 language: node_js
 os: osx
+
+before_install:
+  - brew update
+  - brew upgrade --all
+
+install: brew install node
 before_script: npm install -g grunt-cli electron-packager
 script: grunt darwin
