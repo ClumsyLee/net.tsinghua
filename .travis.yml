@@ -9,10 +9,6 @@ install:
 
 script: grunt darwin
 
-before_deploy:
-  - export DMG_RELEASE=$(ls build/release/*/*.dmg)
-  - export ZIP_RELEASE=$(ls build/release/*/*.zip)
-
 addons:
   artifacts:
     paths:
