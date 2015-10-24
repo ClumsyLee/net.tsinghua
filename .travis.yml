@@ -13,13 +13,7 @@ before_deploy:
   - export DMG_RELEASE=$(ls build/release/*/*.dmg)
   - export ZIP_RELEASE=$(ls build/release/*/*.zip)
 
-deploy:
-  provider: releases
-  api_key:
-    secure: GT3ik/x7ntUoWaksRrVzx7UlSLUeSdYaOy5a9K5j6tC1ICi2gltHIGZ6pu0UMYSagggZNJRMERBcEi865JZSci6QXjs0exQEcq+cgpmdDbBpWH09U2UIy2oFJI6PwoFDjQ2gtWYxVOhrgqtVAqNPu5aooHwd0R0LLeuMk/2+oDNEkGta9zoftAP73Vi7VdnzsGy9V6/XB7MZLbVDJNJ5fsOdJeVLDg5tQ73iRTk7vqRq4A2STzfx1/xhhoABF5RIX7qwabghsnyHjY96oS4ZJO42tJk/snbGkC7tCmyf8TjBLmS5oEKhh2xrffmKqZ90cP+GbtnkJYTX4WeGO+zBHuAzatP3ZieBIIsX2+g0jhmrk9eXSO+3Qji7Uu1BN7YVwPyeJZvBJ4foxp2PpHFJIOj6Q64u4uVilHiN33iJooxJnsyYnLE7Dg5/D8gLcWV6uV5WAarAgw2vsb2R9S/ADCpfUF5VQVKiaFwkmh7j6Nx80m1W6V++KyH7xB7xxqhFRddmDeckLb10EJaBKSGCtwnBncBiL9trEMDyO4WsqvLGctc6gn4hzcrWn3PcWLcV9rlM0AmDxIp5NKa6b10/5g1Wi/kpN4IbbvsueeMtLJDSzJ0CK+qbMONYWilyWvgNyKIwfaBEdItJBl/VsNx0x0PYci3a0Alx15NB8fCm/GE=
-  file:
-    - "${DMG_RELEASE}"
-    - "${ZIP_RELEASE}"
-  skip_cleanup: true
-  on:
-    tags: true
+addons:
+  artifacts:
+    paths:
+      - $(ls build/release/*/* | tr "\n" ":")
