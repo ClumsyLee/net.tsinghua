@@ -57,7 +57,8 @@ if (process.platform == 'darwin') {
       title: title,
       message: message,
       wait: true,
-      icon: path.join(__dirname, '../resource/icon.png')
+      icon: path.join(__dirname, '../resource/icon.png'),
+      sender: "com.electron.net.tsinghua"
     });
   };
 
