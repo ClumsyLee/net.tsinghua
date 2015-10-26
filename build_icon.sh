@@ -2,8 +2,7 @@
 
 cd resource
 
-inkscape -z -e icon.iconset/icon_1024x1024.png -w 1024 -h 1024 icon.svg
-cp icon.iconset/icon_1024x1024.png icon.iconset/icon_512x512@2x.png
+inkscape -z -e icon.iconset/icon_512x512@2x.png -w 1024 -h 1024 icon.svg
 
 inkscape -z -e icon.iconset/icon_512x512.png -w 512 -h 512 icon.svg
 cp icon.iconset/icon_512x512.png icon.iconset/icon_256x256@2x.png
