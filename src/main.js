@@ -260,6 +260,7 @@ function update_infos(callback) {
   usereg.get_infos(config.username, config.md5_pass, function (err, infos) {
     if (err) {
       console.error('Failed to update infos using usereg: %s', err);
+      notify('更新最新信息失败', err);
     } else {
       total_usage = infos.usage;
       balance = infos.balance;
