@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>连线其它IP</title>
+    <script>
+      var ipc = require('ipc');
+
+      function login_ip() {
+        var ipaddr = document.getElementById('ipaddr').value;
+        ipc.send('login_ip', ipaddr);
+      }
+    </script>
+  </head>
+  <body>
+    <div style="position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);">
+      <table>
+        <tr>
+          <td>
+            <label for="ipaddr">要连线的IP</label>
+          </td>
+          <td>
+            <input type="text" name="ipaddr" id="ipaddr">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <center>
+              <input type="button" name="submit" value="确认" onclick="login_ip();window.close();">
+            </center>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

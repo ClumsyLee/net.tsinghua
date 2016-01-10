@@ -14,6 +14,7 @@ var utils = require('./utils');
 
 var BASE_URL = 'https://usereg.tsinghua.edu.cn';
 var LOGIN_URL = BASE_URL + '/do.php';
+var LOGIN_IP_URL = BASE_URL + '/ip_login.php';
 var INFO_URL = BASE_URL + '/user_info.php';
 var SESSIONS_URL = BASE_URL + '/online_user_ipv4.php';
 
@@ -90,7 +91,42 @@ exports.logout_session = function logout_session(username, md5_pass, id, callbac
       });
     }
   });
-}
+};
+
+exports.login_ip = function login_ip(username, md5_pass, user_ip, callback) {
+  if (typeof callback === 'undefined') {
+    callback = function (err) {};
+  }
+  login(username, md5_pass, function (err) {
+    if (err) {
+      callback(err);
+    } else {
+      request.post({
+        url: LOGIN_IP_URL,
+        form: {
+          n: '100',
+          is_pad: '1',
+          type: '10',
+          action: 'do_login',
+          drop: '0',
+          user_ip: user_ip
+        },
+        encoding: null
+      },
+      function (err, r, body) {
+        if (err) {
+          return callback('连线IP失败');
+        }
+        body = utils.gb2312_to_utf8(body);
+        if (body.indexOf('上线请求已发送') > -1) {
+          return callback(null);
+        } else {
+          return callback('连线IP失败: ' + body);
+        }
+      });
+    }
+  });
+};
 
 // Call callback(err).
 function login(username, md5_pass, callback) {
