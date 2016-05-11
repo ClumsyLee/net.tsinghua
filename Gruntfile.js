@@ -24,7 +24,7 @@ module.exports = function(grunt) {
       darwin_zip: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.zip',
       darwin_dmg: '<%= path.release %>/<%= pkg.name %>-v<%= pkg.version %>-darwin-x64.dmg'
     },
-    electron_version: '0.33.6',
+    electron_version: '0.37.8',
 
     pkg: grunt.file.readJSON('package.json'),
     'create-windows-installer': {

@@ -307,6 +307,17 @@ function account_setting() {
   });
 }
 
+// Prevent multiple instances on Windows.
+var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  // Someone tried to run a second instance, whatever.
+  return true;
+});
+
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
 app.on('ready', function() {
   console.log('App ready.');
 
