@@ -7,6 +7,7 @@ var BrowserWindow = require('browser-window');
 var Menu = require('menu');
 var shell = require('shell');
 var Tray = require('tray');
+var ipc = require('ipc');
 
 // 3rd party modules.
 var notifier = require('node-notifier');
@@ -134,6 +135,7 @@ function get_menu_template() {
     {type: 'separator'},
     {label: '上线', click: login},
     {label: '下线', click: logout},
+    {label: '连线其它IP', click: login_ip},
     {label: '现在刷新', click: refresh},
 
     // Config.
@@ -187,6 +189,11 @@ function logout() {
       });
     }
   });
+}
+
+function login_ip() {
+  var dialog = new BrowserWindow({width: 500, height: 220, resizable: true});
+  dialog.loadUrl('file://' + __dirname + '/login_ip.html');
 }
 
 function logout_session(id) {
@@ -260,6 +267,7 @@ function update_infos(callback) {
   usereg.get_infos(config.username, config.md5_pass, function (err, infos) {
     if (err) {
       console.error('Failed to update infos using usereg: %s', err);
+      notify('更新最新信息失败', err);
     } else {
       total_usage = infos.usage;
       balance = infos.balance;
@@ -355,3 +363,18 @@ app.on('ready', function() {
 });
 
 app.on('window-all-closed', function() {});
+
+ipc.on('login_ip', function (event, ipaddr) {
+  usereg.login_ip(
+    config.username, config.md5_pass, ipaddr,
+    function (err) {
+      if (!err) {
+        console.log(ipaddr + ' 的上线请求发送成功');
+        notify('发送上线请求成功', ipaddr + ' 的上线请求成功发送');
+        refresh_infos();
+      } else {
+        console.log(ipaddr + ' 的上线请求发送失败: ' + err);
+        notify('发送上线请求失败', ipaddr + ' 的上线请求发送失败');
+      }
+    });
+});
